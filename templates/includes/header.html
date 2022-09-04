@@ -1,0 +1,51 @@
+<!-- ======= Header ======= -->
+<header id="header" class="fixed-top ">
+    <div class="container d-flex align-items-center justify-content-between">
+
+        <h1 class="logo"><a href="index.html">AutoML</a></h1>
+
+
+        <nav id="navbar" class="navbar">
+            <ul>
+                <li><a class="nav-link scrollto active" href="{% url 'home' %}">Home</a></li>
+                <li><a class="nav-link scrollto" href="{% url 'home' %}#about">About</a></li>
+                <li><a class="nav-link scrollto" href="{% url 'home' %}#why-us">Services</a></li>
+                {% if user.is_authenticated %}
+                    <a class="" href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                <li><a class="" href="{% url 'login' %}">Login</a></li>
+                <li><a class="" href="{% url 'register' %}">Create account</a></li>
+                {% endif %}
+            </ul>
+            <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav><!-- .navbar -->
+
+    </div>
+</header><!-- End Header -->
+
+
+
+
+
+
+
+
+<header class="header ">
+    <div class="container">
+        <div class="row ">
+            <div class="col-md-6 header-info">
+                <a class="mr-3"></a>
+                <span></span>
+            </div>
+            <div class="header-buttons col-md-6 d-flex justify-content-end">
+                {% if user.is_authenticated %}
+                <a class="btn btn-accent mr-3" href="">Dashboard</a>
+                <a class="btn btn-accent " href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                <a class="btn btn-accent mr-3" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-accent " href="{% url 'register' %}">Create account</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+        <div class="col-md-4 offset-md-4">
+            {% include 'messages.html' %}
+        </div>
+
+
+        <!-- ======= Hero Section ======= -->
+        <section id="hero" class="d-flex align-items-center">
+        
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 pt-2 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
+                        <h1>Automating Machine Learning Pipeline</h1>
+        
+                        <div class="mt-3">
+                            <a href="#about" class="btn-get-started scrollto">Get Started</a>
+        
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-1 order-lg-2 hero-img">
+                        <img src="{% static './img/hero-img.png' %}" class="img-fluid" alt="">
+                    </div>
+                </div>
+            </div>
+        
+        </section><!-- End Hero -->
+
+
+        <main id="main">
+            <!-- ======= About Section ======= -->
+            <section id="about" class="about">
+                <div class="container">
+        
+                    <div class="row content">
+                        <div class="col-lg-6">
+                            <h2>AutoML</h2>
+                            <h3>We automate machine learning pipeline phases that includes from data preprocessing to model
+                                deployment.</h3>
+                        </div>
+                        <div class="col-lg-6 pt-4 pt-lg-0">
+                            <p>
+                                Automated machine learning (AutoML) seeks to automatically select, compose, and parametrize
+                                machine learning algorithms,as to achieve optimal performance on a given task (dataset).
+                            </p>
+                            <ul>
+                                <li><i class="ri-check-double-line"></i> Accuracy</li>
+                                <li><i class="ri-check-double-line"></i> Speed </li>
+                                <li><i class="ri-check-double-line"></i> Reduced Resource Expenditure</li>
+                                <li><i class="ri-check-double-line"></i> Elimination of Errors due to Human Intervention </li>
+                                <li><i class="ri-check-double-line"></i> Limits the burden experienced by the data scientist
+                                </li>
+                            </ul>
+        
+                        </div>
+                    </div>
+        
+                </div>
+            </section><!-- End About Section -->
+            <!-- ======= Why Us Section ======= -->
+            <section id="why-us" class="why-us">
+                <div class="container">
+        
+                    <div class="row">
+        
+                        <div class="col-lg-4">
+                            <div class="box">
+                                <span>01</span>
+                                <h4>Data preprocessing</h4>
+                                <p></p>
+                            </div>
+                        </div>
+        
+                        <div class="col-lg-4 mt-4 mt-lg-0">
+                            <div class="box">
+                                <span>02</span>
+                                <h4>Data Visualization</h4>
+                                <p></p>
+                            </div>
+                        </div>
+        
+                        <div class="col-lg-4 mt-4 mt-lg-0">
+                            <div class="box">
+                                <span>03</span>
+                                <h4> Model Making</h4>
+                                <p></p>
+                            </div>
+                        </div>
+        
+                        <div class="col-lg-4 mt-4 mt-lg-0">
+                            <div class="box">
+                                <span>04</span>
+                                <h4> Parameter Tuning</h4>
+                                <p></p>
+                            </div>
+                        </div>
+        
+                        <div class="col-lg-4 mt-4 mt-lg-0">
+                            <div class="box">
+                                <span>05</span>
+                                <h4> Prediction</h4>
+                                <p></p>
+                            </div>
+                        </div>
+        
+                        <div class="col-lg-4 mt-4 mt-lg-0">
+                            <div class="box">
+                                <span>06</span>
+                                <h4> Deployment</h4>
+                                <p></p>
+                            </div>
+                        </div>
+        
+                    </div>
+        
+                </div>
+            </section><!-- End Why Us Section -->
+        </main><!-- End #main -->
+{% endblock %}
