@@ -1,1 +1,19 @@
-<h1>Results</h1>
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="m-5">{{heatmap | safe}}</h1>
+
+{{histogram | safe}}
+
+{{pie | safe}}
+
+{{count | safe}}
+
+{{box | safe}}
+
+{{line | safe}}
+
+{{scatter | safe}}
+
+
+{% endblock %}
