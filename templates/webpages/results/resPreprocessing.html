@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+<p>numberOfColumns {{numberOfColumns}}</p>
+<p>numberOfRows {{numberOfRows}}</p>
+<p>numberOfDuplicate {{numberOfDuplicate}}</p>
+<p>numberOfNumericalColumns {{numberOfNumericalColumns}}</p>
+<p>numberOfCategoricalColumns {{numberOfCategoricalColumns}}</p>
+<h1>-</h1>
+
+<h1>Numerical</h1>
+{% for dict in numericalValues %}
+    <p>Feature Name {{dict.featureName}}</p>
+    <h5 class="col-md-4 border-bottom">Count {{dict.CountOfNonEmptyValues}}</h5>
+    <h5 class="col-md-4 border-bottom">Total missing values {{dict.CountOfEmptyValues}}</h5>
+    <h5 class="col-md-4 border-bottom">% of missing values {{dict.PercentageOfEmptyValues}}</h5>
+    <h5 class="col-md-4 border-bottom">Mean {{dict.mean}}</h5>
+    <h5 class="col-md-4 border-bottom">Median {{dict.median}}</h5>
+    <h5 class="col-md-4 border-bottom">Mode {{dict.mode}}</h5>
+    <h5 class="col-md-4 border-bottom">Variance {{dict.variance}}</h5>
+    <h5 class="col-md-4 border-bottom">Standard Deviation {{dict.standardDeviation}}</h5>
+    <h5 class="col-md-4 border-bottom">Minimum Value {{dict.minimumValue}}</h5>
+    <h5 class="col-md-4 border-bottom">Maximum Value {{dict.maximumValue}}</h5>
+    <h5 class="col-md-4 border-bottom">Q1 {{dict.q1}}</h5>
+    <h5 class="col-md-4 border-bottom">Q2 {{dict.q2}}</h5>
+    <h5 class="col-md-4 border-bottom">Q3 {{dict.q3}}</h5>
+    <h5 class="col-md-4 border-bottom">IQR {{dict.iqr}}</h5>
+    <h5 class="col-md-4 border-bottom">Kurtosis {{dict.kurtosis}}</h5>
+    <h1>-</h1>
+{% endfor %}
+
+
+<h1>Categorical</h1>
+{% for dict in categoricalValues %}
+    <p>Feature Name {{dict.featureName}}</p>
+    <h5 class="col-md-4 border-bottom">Count {{dict.CountOfNonEmptyValues}}</h5>
+    <h5 class="col-md-4 border-bottom">Total missing values {{dict.CountOfEmptyValues}}</h5>
+    <h5 class="col-md-4 border-bottom">% of missing values {{dict.PercentageOfEmptyValues}}</h5>
+    <h5 class="col-md-4 border-bottom">Mode {{dict.mode}}</h5>
+    <h1>-</h1>
+{% endfor %}
+
+
+
+{% endblock %}

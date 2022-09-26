@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<!-- <form class="container mt-5" action="{% url 'resPreprocessing' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h3 for="name">upload your CSV file</h3> 
+    <input type="file" name="csvfile" id="name" accept=".csv" required />
+    <ul class="actions" style="display: flex; justify-content: center;">
+        <li><input type="submit" value="Analyse" class="primary" id="submit" onclick="button()" /></li>
+    </ul>
+</form> -->
+
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/form.jpg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <h1>DATA PREPROCESSING</h1>
+
+            <form action="{% url 'resPreprocessing' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBxfile">
+                    <span> Upload Dataset</span>
+                    <input type="file" class="abc" name="csvfile" accept=".csv" required>
+                </div>
+                <div class="inputBx">
+                    <span>Numerical data</span>
+                    <input type="text" placeholder="zero based indexing" name="num">
+                </div>
+                <div class="inputBx">
+                    <span>Target variable</span>
+                    <input type="Text" placeholder="" name="tar">
+                </div>
+
+
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
