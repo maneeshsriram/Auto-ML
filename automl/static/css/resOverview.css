@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
+*
+{
+    box-sizing: border-box;
+    background-color: white;
+    font-family: "Open Sans", sans-serif;
+}
+
+
+.flex-container{
+    display: flex;
+}
+
+.flex-child {
+    flex: 1;
+}
+
+.summary{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+section .mainone{
+    margin-top: 20px;
+    
+}
+section .mainone h1{
+    color:rgb(53, 39, 62)
+
+}
+
+
+
+section .mainone .summary td{
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
+    border-left : 2px solid #000000;
+    border-top : 2px solid #000000;
+    color: rgb(0, 0, 0);
+}
+
+section .mainone .num td{
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
+    border-left : 2px solid #000000;
+    border-top : 2px solid #000000;
+    color: rgb(0, 0, 0);
+
+}
+
+section .mainone .cat td{
+    border-bottom: 2px solid #000000;
+    border-right: 2px solid #000000;
+    border-left : 2px solid #000000;
+    border-top : 2px solid #000000;
+    color: rgb(0, 0, 0);
+}
+
+
+
+
+@media (max-width: 768px)
+{
+    section .imgBx
+    {
+        top: 0;
+        left: 0;
+        width:100%;
+        height : 100%;
+
+    }
+    section .contentBx
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+
+    }
+
+}
+

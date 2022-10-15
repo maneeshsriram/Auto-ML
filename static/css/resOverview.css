@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
+*
+{
+    margin: 10px;
+    padding: 5px;
+    box-sizing: border-box;
+    
+    background-color: white;
+    font-family: "Open Sans", sans-serif;
+}
+
+
+
+.overview{
+    position: relative;
+    width: 100%;
+    height:100vh;
+    display: flex;
+}
+
+section .mainone{
+    margin-top: 20px;
+    
+}
+section .mainone h1{
+    color:rgb(53, 39, 62)
+
+}
+
+
+
+section .mainone .summary td{
+    border-bottom: 2px solid #1f2024;
+    border-right: 2px solid #1f2024;
+    border-left : 2px solid #1f2024;
+    border-top : 2px solid #1f2024;
+    color: rgb(72, 24, 127);
+}
+
+section .mainone .num td{
+    border-bottom: 2px solid #1f2024;
+    border-right: 2px solid #1f2024;
+    border-left : 2px solid #1f2024;
+    border-top : 2px solid #1f2024;
+    color: rgb(72, 24, 127);
+
+}
+
+section .mainone .cat td{
+    border-bottom: 2px solid #1f2024;
+    border-right: 2px solid #1f2024;
+    border-left : 2px solid #1f2024;
+    border-top : 2px solid #1f2024;
+    color: rgb(72, 24, 127);
+}
+
+
+
+
+@media (max-width: 768px)
+{
+    section .imgBx
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width:100%;
+        height : 100%;
+
+    }
+    section .contentBx
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+
+    }
+
+}
+
