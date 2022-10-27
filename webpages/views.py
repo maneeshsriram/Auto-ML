@@ -192,8 +192,7 @@ def resVisualization(request):
 
 
 
-def model(request):
-    return render(request, 'webpages/model.html')
+
 
 
 def parameter(request):
