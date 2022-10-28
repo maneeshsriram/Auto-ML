@@ -1,3 +1,4 @@
+from sklearn.linear_model import LinearRegression
 from django.shortcuts import render
 import numpy as np
 import pandas as pd
@@ -20,6 +21,8 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.ensemble import RandomForestRegressor
 import warnings
 warnings.filterwarnings('ignore')
+
+
 
 
 
@@ -132,11 +135,252 @@ def allModels(request):
     return render(request, 'webpages/results/resAllModels.html', data)
 
     
-    
 
 
+def modelList(request):
+    return render(request, 'webpages/modelsList.html')
+
+def linear(request):
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = LinearRegression()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def ridge(request):
+    from sklearn.linear_model import Ridge
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split,cross_val_score
+    X,Y = load_diabetes(return_X_y=True)
+    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0) 
+    model=Ridge()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n=X_train.shape[0]
+    p=X_train.shape[1]
+    adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def lasso(request):
+    from sklearn.linear_model import Lasso
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = Lasso()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def enr(request):
+    from sklearn.linear_model import ElasticNet
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = ElasticNet()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def ard(request):
+    from sklearn.linear_model import ARDRegression
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    import pandas as pd
+    import numpy as np
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=0.3, random_state=0)
+    model = ARDRegression()
+    r_squared = cross_val_score(
+        model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def sgd(request):
+    from sklearn.linear_model import SGDRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = SGDRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def svr(request):
+    from sklearn.svm import SVR
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = SVR()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def dtr(request):
+    from sklearn.tree import DecisionTreeRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = DecisionTreeRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def rfr(request):
+    from sklearn.ensemble import RandomForestRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = RandomForestRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def gbr(request):
+    from sklearn.ensemble import GradientBoostingRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = GradientBoostingRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def lgbm(request):
+    from lightgbm import LGBMRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split,cross_val_score
+    X,Y = load_diabetes(return_X_y=True)
+    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)    
+    model=LGBMRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean() 
+    n=X_train.shape[0]
+    p=X_train.shape[1]
+    adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def xgbr(request):
+    from xgboost.sklearn import XGBRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split,cross_val_score
+    X,Y = load_diabetes(return_X_y=True)
+    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)    
+    model=XGBRegressor(verbosity=0)
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()                         
+    n=X_train.shape[0]
+    p=X_train.shape[1]
+    adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def guassian(request):
+    from sklearn.gaussian_process import GaussianProcessRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = GaussianProcessRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def knr(request):
+    from sklearn.neighbors import KNeighborsRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = KNeighborsRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def mlp(request):
+    from sklearn.neural_network import MLPRegressor
+    from sklearn.datasets import load_diabetes
+    from sklearn.model_selection import train_test_split, cross_val_score
+    X, Y = load_diabetes(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+    model = MLPRegressor()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    n = X_train.shape[0]
+    p = X_train.shape[1]
+    adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
+    data = {
+        'score': round(adj_rsquared, 2)
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
 
 
-def chooseModel(request):
-    pass
-    
