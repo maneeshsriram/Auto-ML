@@ -1,3 +1,4 @@
+from django.core.files.storage import default_storage
 from sklearn.linear_model import LinearRegression
 from django.shortcuts import render
 import numpy as np
@@ -23,20 +24,36 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.datasets import load_iris
+from sklearn.metrics import f1_score, make_scorer
 
 
 
-
-
+def modelDataset(request):
+    return render(request, 'webpages/modelDataset.html')
 
 def modelmaking(request):
+    if request.method == 'POST':
+        global targetvariable
+        global file_name
+        file = request.FILES['csvfile']
+        targetvariable = request.POST['tar']
+        file_name = default_storage.save(file.name, file)
     return render(request, 'webpages/model.html')
 
 
-
-
-
 def allModels(request):
+    file = default_storage.open(file_name)
     random_state = 42
     prediction = False
     REGRESSORS = []
@@ -118,28 +135,69 @@ def allModels(request):
         predictions_df = pd.DataFrame.from_dict(predictions)
         return predictions
     
-    scores_dict = scores.to_dict()
+    r2_scores_dict = scores.to_dict()
+
+
+
+    CLASSIFIERS = [] 
+    CLASSIFIERS.append(("adaboost", AdaBoostClassifier))
+    CLASSIFIERS.append(("decision_tree", DecisionTreeClassifier))
+    CLASSIFIERS.append(("extra_trees", ExtraTreesClassifier))
+    CLASSIFIERS.append(("gaussianNB", GaussianNB))
+    CLASSIFIERS.append(("gradient_boosting", HistGradientBoostingClassifier))
+    CLASSIFIERS.append(("k_nearest_neighbors", KNeighborsClassifier))
+    CLASSIFIERS.append(("libsvm_svc", SVC))
+    CLASSIFIERS.append(("mlp", MLPClassifier))
+    CLASSIFIERS.append(("random_forest", RandomForestClassifier))
+    F1_Score = []
+    names = []
+    X,Y = load_iris(return_X_y=True)
+    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)
+    if isinstance(X_train, np.ndarray):
+        X_train = pd.DataFrame(X_train)
+        X_test = pd.DataFrame(X_test)
+    for name, model in CLASSIFIERS:
+        try:
+            f1 = cross_val_score(model(), X_train, y_train, cv = 5,scoring=make_scorer(f1_score,average='micro')).mean()
+            names.append(name)
+            F1_Score.append(f1)
+        except Exception as exception:
+            print(name + " model failed to execute")
+            print(exception)
+    f2_scores = {
+            "Model": names,
+            "F1 Score": F1_Score,
+            }
+
 
     data = {
-        'ard_regression': scores_dict['Adjusted R-Squared']['ard_regression'],
-        'adaboost': scores_dict['Adjusted R-Squared']['adaboost'],
-        'extra_trees': scores_dict['Adjusted R-Squared']['extra_trees'],
-        'random_forest': scores_dict['Adjusted R-Squared']['random_forest'],
-        'gradient_boosting': scores_dict['Adjusted R-Squared']['gradient_boosting'],
-        'k_nearest_neighbors': scores_dict['Adjusted R-Squared']['k_nearest_neighbors'],
-        'libsvm_svr': scores_dict['Adjusted R-Squared']['libsvm_svr'],
-        'decision_tree': scores_dict['Adjusted R-Squared']['decision_tree'],
-        'gaussian_process': scores_dict['Adjusted R-Squared']['gaussian_process'],
-        'mlp': scores_dict['Adjusted R-Squared']['mlp'],
+        'ard_regression': r2_scores_dict['Adjusted R-Squared']['ard_regression'],
+        'adaboost': r2_scores_dict['Adjusted R-Squared']['adaboost'],
+        'extra_trees': r2_scores_dict['Adjusted R-Squared']['extra_trees'],
+        'random_forest': r2_scores_dict['Adjusted R-Squared']['random_forest'],
+        'gradient_boosting': r2_scores_dict['Adjusted R-Squared']['gradient_boosting'],
+        'k_nearest_neighbors': r2_scores_dict['Adjusted R-Squared']['k_nearest_neighbors'],
+        'libsvm_svr': r2_scores_dict['Adjusted R-Squared']['libsvm_svr'],
+        'decision_tree': r2_scores_dict['Adjusted R-Squared']['decision_tree'],
+        'gaussian_process': r2_scores_dict['Adjusted R-Squared']['gaussian_process'],
+        'mlp': r2_scores_dict['Adjusted R-Squared']['mlp'],
+        'Cadaboost': f2_scores['F1 Score'][0],
+        'Cdecision_tree': f2_scores['F1 Score'][1],
+        'Cextra_trees': f2_scores['F1 Score'][2],
+        'CgaussianNB': f2_scores['F1 Score'][3],
+        'Cgradient_boosting': f2_scores['F1 Score'][4],
+        'Ck_nearest_neighbors': f2_scores['F1 Score'][5],
+        'Clibsvm_svc': f2_scores['F1 Score'][6],
+        'Cmlp' : f2_scores['F1 Score'][7],
+        'Crandom_forest' : f2_scores['F1 Score'][8],
     }
     return render(request, 'webpages/results/resAllModels.html', data)
 
     
 
 
-def modelList(request):
-    return render(request, 'webpages/modelsList.html')
-
+    
+#Regression Models
 def linear(request):
     from sklearn.datasets import load_diabetes
     from sklearn.model_selection import train_test_split, cross_val_score
@@ -382,5 +440,207 @@ def mlp(request):
         'score': round(adj_rsquared, 2)
     }
     return render(request, 'webpages/results/resListModels.html', data)
+
+
+# Classification Models
+def logistic(request):
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import f1_score
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    f1 = f1_score(y_test, y_pred, average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def svc(request):
+    from sklearn.svm import SVC
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=SVC()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def dtc(request):
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=DecisionTreeClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def gaussianNB(request):
+    from sklearn.naive_bayes import GaussianNB
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=GaussianNB()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def multinomialNB(request):
+    from sklearn.naive_bayes import MultinomialNB
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=MultinomialNB()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def sgdc(request):
+    from sklearn.linear_model import SGDClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=SGDClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def knnc(request):
+    from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=KNeighborsClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def rfc(request):
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=RandomForestClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def gbc(request):
+    from sklearn.ensemble import GradientBoostingClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=GradientBoostingClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def lgbmc(request):
+    from lightgbm import LGBMClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=LGBMClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+def xgbc(request):
+    from xgboost.sklearn import XGBClassifier
+    from sklearn.metrics import f1_score   
+    from sklearn.model_selection import train_test_split
+    from sklearn.datasets import load_iris
+    iris=load_iris()
+    X=iris.data
+    y=iris.target
+    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)    
+    model=XGBClassifier()
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)   
+    f1=f1_score(y_test,y_pred,average='micro')
+    data = {
+        'score': f1
+    }
+    return render(request, 'webpages/results/resListModels.html', data)
+
+
 
 
