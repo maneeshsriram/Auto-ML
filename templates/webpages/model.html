@@ -1,69 +1,97 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block content %}
 
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link href="{% static './css/forms/model.css' %}" rel="stylesheet">
 
-<section>
-    <div class="imgBx">
-        <img src="{% static './img/model.jpg' %}">
-    </div>
-    <div class="contentBx">
-        <div class="formBx">
-            <h1>MODEL MAKING</h1>
-
-            <form>
-                <div class="inputBxfile">
-                    <span>Would you like to specify the model ?</span>
-                </div>
-                <div class="menu-bar">
-
-
-                    <ul>
-                        <li><a href="#">Select Model<i class="fas fa-caret-down"></i></a>
-
-                            <div class="dropdown-menu">
-                                <ul>
-                                    <li><a href="{% url 'allModels' %}">NO</a></li>
-
-                                    <li >
-                                        <a href="#" >YES<i class="mt-3 pt-4 fas fa-caret-right"></i></a>
-
-                                        <div class="dropdown-menu-1">
-                                            <ul>
-                                                <li><a href="{% url 'linear' %}">Linear Regression </a></li>
-                                                <li><a href="{% url 'ridge' %}">Ridge Regression </a></li>
-                                                <li><a href="{% url 'lasso' %}">Lasso Regression </a></li>
-                                                <li><a href="{% url 'enr' %}">ElasticNet </a></li>
-                                                <li><a href="{% url 'ard' %}">ARD Regression </a></li>
-                                                <li><a href="{% url 'sgd' %}">SGD Regressor </a></li>
-                                                <li><a href="{% url 'svr' %}">SVR </a></li>
-                                                <li><a href="{% url 'dtr' %}">DecisionTree Regressor</a></li>
-                                                <li><a href="{% url 'rfr' %}">RandomForest Regressor </a></li>
-                                                <li><a href="{% url 'gbr' %}">GradientBoosting Regressor</a></li>
-                                                <li><a href="{% url 'lgbm' %}">LGBM Regressor </a></li>
-                                                <li><a href="{% url 'xgbr' %}">XGB Regressor</a></li>
-                                                <li><a href="{% url 'guassian' %}">GaussianProcess Regressor</a></li>
-                                                <li><a href="{% url 'knr' %}">KNeighbors Regressor</a></li>
-                                                <li><a href="{% url 'mlp' %}">MLP Regressor </a></li>
-                                            </ul>
-                                        </div>
+        <section>
+            <div class="imgBx">
+                <img src="{% static './img/model.jpg' %}">
+            </div>
+            <div class="contentBx">
+                <div class="formBx">
+                    <h1>MODEL MAKING</h1>
+        
+                    <form>
+                        <div class="inputBxfile">
+                            <span>Would you like to specify the model ?</span>
+                        </div>
+        
+        
+                        <div class="container">
+        
+                            <div class="dropdown">
+                                <button class="btn btn-default" type="button" data-toggle="dropdown">Select
+                                    Model
+                                    <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-submenu">
+                                        <a class="test" tabindex="-1" href="#">NO<span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-submenu"><a href="{% url 'allModelsRegression' %}">Regression </a></li>
+                                            <li class="dropdown-submenu"><a href="{% url 'allModelsClassification' %}">Classification</a></li>
+                                        </ul>
+                                    </li>
+        
+                                    <li class="dropdown-submenu">
+                                        <a class="test" tabindex="-1" href="#">YES<span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-submenu">
+                                                <a class="test" href="#">Regression<span class="caret"></span></a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="{% url 'linear' %}">Linear Regression </a></li>
+                                                    <li><a href="{% url 'ridge' %}">Ridge Regression </a></li>
+                                                    <li><a href="{% url 'lasso' %}">Lasso Regression </a></li>
+                                                    <li><a href="{% url 'enr' %}">ElasticNet </a></li>
+                                                    <li><a href="{% url 'ard' %}">ARD Regression </a></li>
+                                                    <li><a href="{% url 'sgd' %}">SGD Regressor </a></li>
+                                                    <li><a href="{% url 'svr' %}">SVR </a></li>
+                                                    <li><a href="{% url 'dtr' %}">DecisionTree Regressor</a></li>
+                                                    <li><a href="{% url 'rfr' %}">RandomForest Regressor </a></li>
+                                                    <li><a href="{% url 'gbr' %}">GradientBoosting Regressor</a></li>
+                                                    <li><a href="{% url 'lgbm' %}">LGBM Regressor </a></li>
+                                                    <li><a href="{% url 'xgbr' %}">XGB Regressor</a></li>
+                                                    <li><a href="{% url 'guassian' %}">GaussianProcess Regressor</a></li>
+                                                    <li><a href="{% url 'knr' %}">KNeighbors Regressor</a></li>
+                                                    <li><a href="{% url 'mlp' %}">MLP Regressor </a></li>
+                                                </ul>
+                                                <a class="test" href="#">Classification<span class="caret"></span></a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="{% url 'logistic' %}">Logistic</a></li>
+                                                    <li><a href="{% url 'svc' %}">SVC</a></li>
+                                                    <li><a href="{% url 'dtc' %}">Decision Tree Classifier</a></li>
+                                                    <li><a href="{% url 'gaussianNB' %}">GaussainNB</a></li>
+                                                    <li><a href="{% url 'multinomialNB' %}">MultinomialNB</a></li>
+                                                    <li><a href="{% url 'sgdc' %}">SGD</a></li>
+                                                    <li><a href="{% url 'knnc' %}">KNN</a></li>
+                                                    <li><a href="{% url 'rfc' %}">Random Forest</a></li>
+                                                    <li><a href="{% url 'gbc' %}">Gradient Boosting</a></li>
+                                                    <li><a href="{% url 'lgbmc' %}">LGBM</a></li>
+                                                    <li><a href="{% url 'xgbc' %}">Xg Boost</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
                                     </li>
                                 </ul>
                             </div>
-                        </li>
-
-                    </ul>
+                        </div>
+                        <script>
+                            $(document).ready(function () {
+                                $('.dropdown-submenu a.test').on("click", function (e) {
+                                    $(this).next('ul').toggle();
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                });
+                            });
+                        </script>        
+                    </form>
+        
                 </div>
-
-                </ul>
-
-
-            </form>
-
-        </div>
-    </div>
-</section>
+            </div>
+        </section>
 
 {% endblock %}

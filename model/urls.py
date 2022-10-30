@@ -5,7 +5,8 @@ urlpatterns = [
     path('modelDataset', views.modelDataset, name='modelDataset'),
     path('modelmaking', views.modelmaking, name='modelmaking'),
     
-    path('allModels', views.allModels, name='allModels'),
+    path('allModelsRegression', views.allModelsRegression, name='allModelsRegression'),
+    path('allModelsClassification', views.allModelsClassification, name='allModelsClassification'),
 
     path('linear', views.linear, name='linear'),
     path('ridge', views.ridge, name='ridge'),

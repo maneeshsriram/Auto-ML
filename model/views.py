@@ -52,7 +52,12 @@ def modelmaking(request):
     return render(request, 'webpages/model.html')
 
 
-def allModels(request):
+
+
+
+
+
+def allModelsRegression(request):
     file = default_storage.open(file_name)
     random_state = 42
     prediction = False
@@ -60,7 +65,7 @@ def allModels(request):
     REGRESSORS.append(("adaboost", AdaBoostRegressor))
     REGRESSORS.append(("ard_regression", ARDRegression))
     REGRESSORS.append(("decision_tree", DecisionTreeRegressor))
-    REGRESSORS.append(("extra_trees", ExtraTreesRegressor ))
+    REGRESSORS.append(("extra_trees", ExtraTreesRegressor))
     REGRESSORS.append(("gaussian_process", GaussianProcessRegressor))
     REGRESSORS.append(("gradient_boosting", HistGradientBoostingRegressor))
     REGRESSORS.append(("k_nearest_neighbors", KNeighborsRegressor))
@@ -68,32 +73,34 @@ def allModels(request):
     REGRESSORS.append(("mlp", MLPRegressor))
     REGRESSORS.append(("random_forest", RandomForestRegressor))
     numeric_transformer = Pipeline(
-        steps=[("imputer", SimpleImputer(strategy="mean")), ("scaler", StandardScaler())]
+        steps=[("imputer", SimpleImputer(strategy="mean")),
+               ("scaler", StandardScaler())]
     )
     categorical_transformer = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="constant", fill_value="missing")),
             ("encoding", OneHotEncoder(handle_unknown="ignore", sparse=False)),
         ]
-    )  
+    )
     ADJR2 = []
     predictions = {}
     names = []
     TIME = []
     CUSTOM_METRIC = []
     from sklearn.datasets import load_diabetes
-    db=load_diabetes()
-    X=db.data
-    y=db.target
+    db = load_diabetes()
+    X = db.data
+    y = db.target
     from sklearn.model_selection import train_test_split
-    X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.3,random_state=0)  
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=0)
     if isinstance(X_train, np.ndarray):
         X_train = pd.DataFrame(X_train)
         X_test = pd.DataFrame(X_test)
     numeric_features = X_train.select_dtypes(include=[np.number]).columns
     categorical_features = X_train.select_dtypes(include=["object"]).columns
     preprocessor = ColumnTransformer(
-        transformers=[("numeric", numeric_transformer, numeric_features),("categorical", categorical_transformer, categorical_features),])
+        transformers=[("numeric", numeric_transformer, numeric_features), ("categorical", categorical_transformer, categorical_features), ])
     for name, model in REGRESSORS:
         try:
             if "random_state" in model().get_params().keys():
@@ -101,12 +108,13 @@ def allModels(request):
                     steps=[
                         ("preprocessor", preprocessor),
                         ("regressor", model(random_state=random_state))
-                        ]
-                        )
+                    ]
+                )
             else:
                 pipe = Pipeline(
-                    steps=[("preprocessor", preprocessor), ("regressor", model())]
-                    )
+                    steps=[("preprocessor", preprocessor),
+                           ("regressor", model())]
+                )
 
             pipe.fit(X_train, y_train)
             y_pred = pipe.predict(X_test)
@@ -124,52 +132,19 @@ def allModels(request):
             print(name + " model failed to execute")
             print(exception)
     scores = {
-            "Model": names,
-            "Adjusted R-Squared": ADJR2,
-            }
+        "Model": names,
+        "Adjusted R-Squared": ADJR2,
+    }
     scores = pd.DataFrame(scores)
-        
-    scores = scores.sort_values(by="Adjusted R-Squared", ascending=False).set_index("Model")
-        
+
+    scores = scores.sort_values(
+        by="Adjusted R-Squared", ascending=False).set_index("Model")
+
     if prediction:
         predictions_df = pd.DataFrame.from_dict(predictions)
         return predictions
-    
+
     r2_scores_dict = scores.to_dict()
-
-
-
-    CLASSIFIERS = [] 
-    CLASSIFIERS.append(("adaboost", AdaBoostClassifier))
-    CLASSIFIERS.append(("decision_tree", DecisionTreeClassifier))
-    CLASSIFIERS.append(("extra_trees", ExtraTreesClassifier))
-    CLASSIFIERS.append(("gaussianNB", GaussianNB))
-    CLASSIFIERS.append(("gradient_boosting", HistGradientBoostingClassifier))
-    CLASSIFIERS.append(("k_nearest_neighbors", KNeighborsClassifier))
-    CLASSIFIERS.append(("libsvm_svc", SVC))
-    CLASSIFIERS.append(("mlp", MLPClassifier))
-    CLASSIFIERS.append(("random_forest", RandomForestClassifier))
-    F1_Score = []
-    names = []
-    X,Y = load_iris(return_X_y=True)
-    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)
-    if isinstance(X_train, np.ndarray):
-        X_train = pd.DataFrame(X_train)
-        X_test = pd.DataFrame(X_test)
-    for name, model in CLASSIFIERS:
-        try:
-            f1 = cross_val_score(model(), X_train, y_train, cv = 5,scoring=make_scorer(f1_score,average='micro')).mean()
-            names.append(name)
-            F1_Score.append(f1)
-        except Exception as exception:
-            print(name + " model failed to execute")
-            print(exception)
-    f2_scores = {
-            "Model": names,
-            "F1 Score": F1_Score,
-            }
-
-
     data = {
         'ard_regression': r2_scores_dict['Adjusted R-Squared']['ard_regression'],
         'adaboost': r2_scores_dict['Adjusted R-Squared']['adaboost'],
@@ -181,6 +156,43 @@ def allModels(request):
         'decision_tree': r2_scores_dict['Adjusted R-Squared']['decision_tree'],
         'gaussian_process': r2_scores_dict['Adjusted R-Squared']['gaussian_process'],
         'mlp': r2_scores_dict['Adjusted R-Squared']['mlp'],
+    }
+    return render(request, 'webpages/results/resAllModelsRegression.html', data)
+
+
+def allModelsClassification(request):
+    CLASSIFIERS = []
+    CLASSIFIERS.append(("adaboost", AdaBoostClassifier))
+    CLASSIFIERS.append(("decision_tree", DecisionTreeClassifier))
+    CLASSIFIERS.append(("extra_trees", ExtraTreesClassifier))
+    CLASSIFIERS.append(("gaussianNB", GaussianNB))
+    CLASSIFIERS.append(("gradient_boosting", HistGradientBoostingClassifier))
+    CLASSIFIERS.append(("k_nearest_neighbors", KNeighborsClassifier))
+    CLASSIFIERS.append(("libsvm_svc", SVC))
+    CLASSIFIERS.append(("mlp", MLPClassifier))
+    CLASSIFIERS.append(("random_forest", RandomForestClassifier))
+    F1_Score = []
+    names = []
+    X, Y = load_iris(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, Y, test_size=0.3, random_state=0)
+    if isinstance(X_train, np.ndarray):
+        X_train = pd.DataFrame(X_train)
+        X_test = pd.DataFrame(X_test)
+    for name, model in CLASSIFIERS:
+        try:
+            f1 = cross_val_score(model(), X_train, y_train, cv=5, scoring=make_scorer(
+                f1_score, average='micro')).mean()
+            names.append(name)
+            F1_Score.append(f1)
+        except Exception as exception:
+            print(name + " model failed to execute")
+            print(exception)
+    f2_scores = {
+        "Model": names,
+        "F1 Score": F1_Score,
+    }
+    data = {
         'Cadaboost': f2_scores['F1 Score'][0],
         'Cdecision_tree': f2_scores['F1 Score'][1],
         'Cextra_trees': f2_scores['F1 Score'][2],
@@ -188,15 +200,19 @@ def allModels(request):
         'Cgradient_boosting': f2_scores['F1 Score'][4],
         'Ck_nearest_neighbors': f2_scores['F1 Score'][5],
         'Clibsvm_svc': f2_scores['F1 Score'][6],
-        'Cmlp' : f2_scores['F1 Score'][7],
-        'Crandom_forest' : f2_scores['F1 Score'][8],
+        'Cmlp': f2_scores['F1 Score'][7],
+        'Crandom_forest': f2_scores['F1 Score'][8],
     }
-    return render(request, 'webpages/results/resAllModels.html', data)
+    return render(request, 'webpages/results/resAllModelsClassification.html', data)
+    
 
     
 
 
-    
+
+
+
+
 #Regression Models
 def linear(request):
     from sklearn.datasets import load_diabetes
