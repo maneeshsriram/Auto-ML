@@ -1,3 +1,5 @@
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
 from django.core.files.storage import default_storage
 from sklearn.linear_model import LinearRegression
 from django.shortcuts import render
@@ -58,105 +60,64 @@ def modelmaking(request):
 
 
 def allModelsRegression(request):
-    file = default_storage.open(file_name)
-    random_state = 42
-    prediction = False
-    REGRESSORS = []
+    # file = default_storage.open(file_name)
+    from sklearn.datasets import load_diabetes
+    REGRESSORS = [] 
     REGRESSORS.append(("adaboost", AdaBoostRegressor))
     REGRESSORS.append(("ard_regression", ARDRegression))
     REGRESSORS.append(("decision_tree", DecisionTreeRegressor))
-    REGRESSORS.append(("extra_trees", ExtraTreesRegressor))
+    REGRESSORS.append(("extra_trees", ExtraTreesRegressor ))
     REGRESSORS.append(("gaussian_process", GaussianProcessRegressor))
     REGRESSORS.append(("gradient_boosting", HistGradientBoostingRegressor))
     REGRESSORS.append(("k_nearest_neighbors", KNeighborsRegressor))
     REGRESSORS.append(("libsvm_svr", SVR))
     REGRESSORS.append(("mlp", MLPRegressor))
     REGRESSORS.append(("random_forest", RandomForestRegressor))
-    numeric_transformer = Pipeline(
-        steps=[("imputer", SimpleImputer(strategy="mean")),
-               ("scaler", StandardScaler())]
-    )
-    categorical_transformer = Pipeline(
-        steps=[
-            ("imputer", SimpleImputer(strategy="constant", fill_value="missing")),
-            ("encoding", OneHotEncoder(handle_unknown="ignore", sparse=False)),
-        ]
-    )
     ADJR2 = []
-    predictions = {}
+    MAE=[]
+    MSE=[]
+    RMSE=[]
     names = []
-    TIME = []
-    CUSTOM_METRIC = []
-    from sklearn.datasets import load_diabetes
-    db = load_diabetes()
-    X = db.data
-    y = db.target
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=0)
+    X,Y = load_diabetes(return_X_y=True)
+    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)  
+
     if isinstance(X_train, np.ndarray):
         X_train = pd.DataFrame(X_train)
-        X_test = pd.DataFrame(X_test)
-    numeric_features = X_train.select_dtypes(include=[np.number]).columns
-    categorical_features = X_train.select_dtypes(include=["object"]).columns
-    preprocessor = ColumnTransformer(
-        transformers=[("numeric", numeric_transformer, numeric_features), ("categorical", categorical_transformer, categorical_features), ])
+        y_train = pd.DataFrame(y_train)
+
     for name, model in REGRESSORS:
         try:
-            if "random_state" in model().get_params().keys():
-                pipe = Pipeline(
-                    steps=[
-                        ("preprocessor", preprocessor),
-                        ("regressor", model(random_state=random_state))
-                    ]
-                )
-            else:
-                pipe = Pipeline(
-                    steps=[("preprocessor", preprocessor),
-                           ("regressor", model())]
-                )
+            # MEAN ABSOLUTE ERROR
+            mae = -cross_val_score(model(), X_train, y_train,  scoring="neg_mean_absolute_error", cv=5).mean()
+            MAE.append(mae)
 
-            pipe.fit(X_train, y_train)
-            y_pred = pipe.predict(X_test)
+            #MEAN SQUARE ERROR
+            mse = -cross_val_score(model(), X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+            MSE.append(mse)
 
-            r_squared = r2_score(y_test, y_pred)
-            n = X_test.shape[0]
-            p = X_test.shape[1]
-            adj_rsquared = 1 - (1 - r_squared) * ((n - 1) / (n - p - 1))
+            #ROOT MEAN SQUARE ERROR
+            rmse=-cross_val_score(model(), X_train, y_train,  scoring="neg_root_mean_squared_error", cv=5).mean()
+            RMSE.append(rmse)
+
+            #R2 Score
+            r_squared = cross_val_score(model(), X, Y,  scoring="r2",cv=3).mean()
             names.append(name)
+            n=X_train.shape[0]
+            p=y_train.shape[1]
+            adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
             ADJR2.append(adj_rsquared)
-
-            if prediction:
-                predictions[name] = y_pred
+    
         except Exception as exception:
             print(name + " model failed to execute")
             print(exception)
-    scores = {
-        "Model": names,
-        "Adjusted R-Squared": ADJR2,
-    }
-    scores = pd.DataFrame(scores)
-
-    scores = scores.sort_values(
-        by="Adjusted R-Squared", ascending=False).set_index("Model")
-
-    if prediction:
-        predictions_df = pd.DataFrame.from_dict(predictions)
-        return predictions
-
-    r2_scores_dict = scores.to_dict()
-    data = {
-        'ard_regression': r2_scores_dict['Adjusted R-Squared']['ard_regression'],
-        'adaboost': r2_scores_dict['Adjusted R-Squared']['adaboost'],
-        'extra_trees': r2_scores_dict['Adjusted R-Squared']['extra_trees'],
-        'random_forest': r2_scores_dict['Adjusted R-Squared']['random_forest'],
-        'gradient_boosting': r2_scores_dict['Adjusted R-Squared']['gradient_boosting'],
-        'k_nearest_neighbors': r2_scores_dict['Adjusted R-Squared']['k_nearest_neighbors'],
-        'libsvm_svr': r2_scores_dict['Adjusted R-Squared']['libsvm_svr'],
-        'decision_tree': r2_scores_dict['Adjusted R-Squared']['decision_tree'],
-        'gaussian_process': r2_scores_dict['Adjusted R-Squared']['gaussian_process'],
-        'mlp': r2_scores_dict['Adjusted R-Squared']['mlp'],
-    }
+        data = {}
+    for i in range(len(names)):
+        temp = {}
+        temp['adjR'] = ADJR2[i]
+        temp['mae'] = MAE[i]
+        temp['mse'] = MSE[i]
+        temp['rmse'] = RMSE[i]
+        data[names[i]] = temp
     return render(request, 'webpages/results/resAllModelsRegression.html', data)
 
 
@@ -181,7 +142,7 @@ def allModelsClassification(request):
         X_test = pd.DataFrame(X_test)
     for name, model in CLASSIFIERS:
         try:
-            f1 = cross_val_score(model(), X_train, y_train, cv=5, scoring=make_scorer(
+            f1 = cross_val_score(model, X_train, y_train, cv=5, scoring=make_scorer(
                 f1_score, average='micro')).mean()
             names.append(name)
             F1_Score.append(f1)
@@ -206,28 +167,36 @@ def allModelsClassification(request):
     return render(request, 'webpages/results/resAllModelsClassification.html', data)
     
 
-    
-
-
-
-
-
 
 #Regression Models
 def linear(request):
+    # file = default_storage.open(file_name)
+    # df = pd.read_csv(file)
+    # col_name = (df.columns.tolist())
+    # Y = col_name[int(targetvariable)]
+    # col_name.remove(Y)
+    # X = col_name
+    
     from sklearn.datasets import load_diabetes
     from sklearn.model_selection import train_test_split, cross_val_score
     X, Y = load_diabetes(return_X_y=True)
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = LinearRegression()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared' : r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def ridge(request):
     from sklearn.linear_model import Ridge
@@ -237,13 +206,20 @@ def ridge(request):
     X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0) 
     model=Ridge()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n=X_train.shape[0]
     p=X_train.shape[1]
     adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def lasso(request):
     from sklearn.linear_model import Lasso
@@ -253,13 +229,20 @@ def lasso(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = Lasso()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def enr(request):
     from sklearn.linear_model import ElasticNet
@@ -269,13 +252,20 @@ def enr(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = ElasticNet()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def ard(request):
     from sklearn.linear_model import ARDRegression
@@ -287,15 +277,21 @@ def ard(request):
     X_train, X_test, y_train, y_test = train_test_split(
         X, Y, test_size=0.3, random_state=0)
     model = ARDRegression()
-    r_squared = cross_val_score(
-        model, X_train, y_train,  scoring="r2", cv=5).mean()
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def sgd(request):
     from sklearn.linear_model import SGDRegressor
@@ -305,13 +301,20 @@ def sgd(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = SGDRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def svr(request):
     from sklearn.svm import SVR
@@ -321,13 +324,20 @@ def svr(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = SVR()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def dtr(request):
     from sklearn.tree import DecisionTreeRegressor
@@ -337,13 +347,20 @@ def dtr(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = DecisionTreeRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def rfr(request):
     from sklearn.ensemble import RandomForestRegressor
@@ -353,13 +370,20 @@ def rfr(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = RandomForestRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def gbr(request):
     from sklearn.ensemble import GradientBoostingRegressor
@@ -369,13 +393,20 @@ def gbr(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = GradientBoostingRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def lgbm(request):
     from lightgbm import LGBMRegressor
@@ -385,13 +416,20 @@ def lgbm(request):
     X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)    
     model=LGBMRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean() 
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n=X_train.shape[0]
     p=X_train.shape[1]
     adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def xgbr(request):
     from xgboost.sklearn import XGBRegressor
@@ -400,14 +438,21 @@ def xgbr(request):
     X,Y = load_diabetes(return_X_y=True)
     X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)    
     model=XGBRegressor(verbosity=0)
-    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()                         
+    r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()  
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()                       
     n=X_train.shape[0]
     p=X_train.shape[1]
     adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def guassian(request):
     from sklearn.gaussian_process import GaussianProcessRegressor
@@ -417,13 +462,20 @@ def guassian(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = GaussianProcessRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def knr(request):
     from sklearn.neighbors import KNeighborsRegressor
@@ -433,13 +485,20 @@ def knr(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = KNeighborsRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 def mlp(request):
     from sklearn.neural_network import MLPRegressor
@@ -449,13 +508,20 @@ def mlp(request):
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
     model = MLPRegressor()
     r_squared = cross_val_score(model, X_train, y_train,  scoring="r2", cv=5).mean()
+    mae = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_mean_absolute_error", cv=5).mean()
+    mse = (-1)*cross_val_score(model, X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+    rmse = (-1)*cross_val_score(model, X_train, y_train, scoring="neg_root_mean_squared_error", cv=5).mean()
     n = X_train.shape[0]
     p = X_train.shape[1]
     adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
     data = {
-        'score': round(adj_rsquared, 2)
+        'r_squared': r_squared,
+        'mae': mae,
+        'mse': mse,
+        'rmse': rmse,
+        'adj_rsquared': round(adj_rsquared, 2)
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListRegModels.html', data)
 
 
 # Classification Models
@@ -472,10 +538,16 @@ def logistic(request):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     f1 = f1_score(y_test, y_pred, average='micro')
+    acc = np.sqrt((cross_val_score(model, X_train, y_train,  scoring="accuracy", cv=5).mean()))
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision')
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall')
     data = {
-        'score': f1
+        'f1_score': f1,
+        'acc' : acc,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def svc(request):
     from sklearn.svm import SVC
