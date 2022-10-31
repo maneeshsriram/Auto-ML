@@ -1,4 +1,80 @@
+
+<h1>Adaboost</h1>
 {% for i in adaboost %}
-    <h1>{{i}}</h1>
-    <h5>{{i.adjR}}</h5>
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>ARD Regression</h1>
+{% for i in ard_regression %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>Decision Tree</h1>
+{% for i in decision_tree %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>Extra Trees</h1>
+{% for i in extra_trees %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>Guassian Process</h1>
+{% for i in gaussian_process %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>Gradient Boosting</h1>
+{% for i in gradient_boosting %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>K Nearest Neighbors</h1>
+{% for i in k_nearest_neighbors %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>Libsvm SVR</h1>
+{% for i in libsvm_svr %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>MLP</h1>
+{% for i in mlp %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
+{% endfor %}
+
+<h1>Random Forest</h1>
+{% for i in random_forest %}
+    <p>Adjusted R2: {{i.adjr}}</p>
+    <p>Mean Average Error: {{i.mae}}</p>
+    <p>Mean Square Error: {{i.mse}}</p>
+    <p>Root Mean Square Error: {{i.rmse}}</p>
 {% endfor %}

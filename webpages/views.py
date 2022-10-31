@@ -81,6 +81,7 @@ def resPreprocessing(request):
             'numericalValues': numericalValues,
             'categoricalValues': categoricalValues,
         }
+        print(numericalValues)
     return render(request, 'webpages/results/resPreprocessing.html', data)
 
 

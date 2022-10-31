@@ -99,7 +99,7 @@ def allModelsRegression(request):
             rmse=-cross_val_score(model(), X_train, y_train,  scoring="neg_root_mean_squared_error", cv=5).mean()
             RMSE.append(rmse)
 
-            #R2 Score
+            #R2 Score  
             r_squared = cross_val_score(model(), X, Y,  scoring="r2",cv=3).mean()
             names.append(name)
             n=X_train.shape[0]
@@ -110,14 +110,17 @@ def allModelsRegression(request):
         except Exception as exception:
             print(name + " model failed to execute")
             print(exception)
-        data = {}
+    data = {}
     for i in range(len(names)):
         temp = {}
-        temp['adjR'] = ADJR2[i]
+        temp2 = []
+        temp['adjr'] = ADJR2[i]
         temp['mae'] = MAE[i]
         temp['mse'] = MSE[i]
         temp['rmse'] = RMSE[i]
-        data[names[i]] = temp
+        temp2.append(temp)
+        data[names[i]] = temp2
+    
     return render(request, 'webpages/results/resAllModelsRegression.html', data)
 
 
@@ -133,37 +136,35 @@ def allModelsClassification(request):
     CLASSIFIERS.append(("mlp", MLPClassifier))
     CLASSIFIERS.append(("random_forest", RandomForestClassifier))
     F1_Score = []
+    PRECISION=[]
+    RECALL=[]
     names = []
-    X, Y = load_iris(return_X_y=True)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, Y, test_size=0.3, random_state=0)
+    X,Y = load_iris(return_X_y=True)
+    X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=0)
     if isinstance(X_train, np.ndarray):
         X_train = pd.DataFrame(X_train)
-        X_test = pd.DataFrame(X_test)
+        y_train = pd.DataFrame(y_train)
     for name, model in CLASSIFIERS:
         try:
-            f1 = cross_val_score(model, X_train, y_train, cv=5, scoring=make_scorer(
-                f1_score, average='micro')).mean()
+            precision = cross_val_score(model(), X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+            recall = cross_val_score(model(), X_train, y_train, cv=5, scoring='recall_micro').mean()
+            f1 = cross_val_score(model(), X_train, y_train, cv = 5,scoring='f1_micro').mean()
             names.append(name)
             F1_Score.append(f1)
+            PRECISION.append(precision)
+            RECALL.append(recall)
         except Exception as exception:
             print(name + " model failed to execute")
             print(exception)
-    f2_scores = {
-        "Model": names,
-        "F1 Score": F1_Score,
-    }
-    data = {
-        'Cadaboost': f2_scores['F1 Score'][0],
-        'Cdecision_tree': f2_scores['F1 Score'][1],
-        'Cextra_trees': f2_scores['F1 Score'][2],
-        'CgaussianNB': f2_scores['F1 Score'][3],
-        'Cgradient_boosting': f2_scores['F1 Score'][4],
-        'Ck_nearest_neighbors': f2_scores['F1 Score'][5],
-        'Clibsvm_svc': f2_scores['F1 Score'][6],
-        'Cmlp': f2_scores['F1 Score'][7],
-        'Crandom_forest': f2_scores['F1 Score'][8],
-    }
+    data = {}
+    for i in range(len(names)):
+        temp = {}
+        temp2 = []
+        temp['F1_Score'] = F1_Score[i]
+        temp['PRECISION'] = PRECISION[i]
+        temp['RECALL'] = RECALL[i]
+        temp2.append(temp)
+        data[names[i]] = temp2
     return render(request, 'webpages/results/resAllModelsClassification.html', data)
     
 
@@ -537,13 +538,11 @@ def logistic(request):
     model = LogisticRegression()
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
-    f1 = f1_score(y_test, y_pred, average='micro')
-    acc = np.sqrt((cross_val_score(model, X_train, y_train,  scoring="accuracy", cv=5).mean()))
-    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision')
-    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
         'f1_score': f1,
-        'acc' : acc,
         'pre' : precision,
         'rec' : recall
     }
@@ -561,11 +560,15 @@ def svc(request):
     model=SVC()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def dtc(request):
     from sklearn.tree import DecisionTreeClassifier
@@ -579,11 +582,15 @@ def dtc(request):
     model=DecisionTreeClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def gaussianNB(request):
     from sklearn.naive_bayes import GaussianNB
@@ -597,11 +604,15 @@ def gaussianNB(request):
     model=GaussianNB()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def multinomialNB(request):
     from sklearn.naive_bayes import MultinomialNB
@@ -615,11 +626,15 @@ def multinomialNB(request):
     model=MultinomialNB()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def sgdc(request):
     from sklearn.linear_model import SGDClassifier
@@ -633,11 +648,15 @@ def sgdc(request):
     model=SGDClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def knnc(request):
     from sklearn.neighbors import KNeighborsClassifier
@@ -651,11 +670,15 @@ def knnc(request):
     model=KNeighborsClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def rfc(request):
     from sklearn.ensemble import RandomForestClassifier
@@ -669,11 +692,15 @@ def rfc(request):
     model=RandomForestClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def gbc(request):
     from sklearn.ensemble import GradientBoostingClassifier
@@ -687,11 +714,15 @@ def gbc(request):
     model=GradientBoostingClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def lgbmc(request):
     from lightgbm import LGBMClassifier
@@ -705,11 +736,15 @@ def lgbmc(request):
     model=LGBMClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 def xgbc(request):
     from xgboost.sklearn import XGBClassifier
@@ -723,11 +758,15 @@ def xgbc(request):
     model=XGBClassifier()
     model.fit(X_train,y_train)
     y_pred=model.predict(X_test)   
-    f1=f1_score(y_test,y_pred,average='micro')
+    precision = cross_val_score(model, X_train, y_train, cv=5, scoring='precision_micro',error_score='raise').mean()
+    recall = cross_val_score(model, X_train, y_train, cv=5, scoring='recall_micro').mean()
+    f1 = cross_val_score(model, X_train, y_train, cv = 5,scoring='f1_micro').mean()
     data = {
-        'score': f1
+        'f1_score': f1,
+        'pre' : precision,
+        'rec' : recall
     }
-    return render(request, 'webpages/results/resListModels.html', data)
+    return render(request, 'webpages/results/resListClassModels.html', data)
 
 
 

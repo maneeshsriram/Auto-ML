@@ -1,10 +1,63 @@
-<h1>Classification</h1>
-<h2>adaboost: {{Cadaboost}}</h2>
-<h2>decision_tree: {{Cdecision_tree}}</h2>
-<h2>extra_trees: {{Cextra_trees}}</h2>
-<h2>gaussianNB: {{CgaussianNB}}</h2>
-<h2>gradient_boosting: {{Cgradient_boosting}}</h2>
-<h2>k_nearest_neighbors: {{Ck_nearest_neighbors}}</h2>
-<h2>libsvm_svc: {{Clibsvm_svc}}</h2>
-<h2>mlp: {{Cmlp}}</h2>
-<h2>random_forest: {{Crandom_forest}}</h2>
+<h1>Adaboost</h1>
+{% for i in adaboost %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>decision_tree</h1>
+{% for i in decision_tree %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>extra_trees</h1>
+{% for i in extra_trees %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>gaussianNB</h1>
+{% for i in gaussianNB %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>gradient_boosting</h1>
+{% for i in gradient_boosting %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>k_nearest_neighbors</h1>
+{% for i in k_nearest_neighbors %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>libsvm_svc</h1>
+{% for i in libsvm_svc %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>mlp</h1>
+{% for i in mlp %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
+<h1>random_forest</h1>
+{% for i in random_forest %}
+    <p>Adjusted R2: {{i.F1_Score}}</p>
+    <p>Mean Average Error: {{i.PRECISION}}</p>
+    <p>Mean Square Error: {{i.RECALL}}</p>
+{% endfor %}
+    
