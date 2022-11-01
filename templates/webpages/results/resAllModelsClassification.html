@@ -1,63 +1,102 @@
-<h1>Adaboost</h1>
-{% for i in adaboost %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>decision_tree</h1>
-{% for i in decision_tree %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>extra_trees</h1>
-{% for i in extra_trees %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>gaussianNB</h1>
-{% for i in gaussianNB %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>gradient_boosting</h1>
-{% for i in gradient_boosting %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>k_nearest_neighbors</h1>
-{% for i in k_nearest_neighbors %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>libsvm_svc</h1>
-{% for i in libsvm_svc %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>mlp</h1>
-{% for i in mlp %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
-<h1>random_forest</h1>
-{% for i in random_forest %}
-    <p>Adjusted R2: {{i.F1_Score}}</p>
-    <p>Mean Average Error: {{i.PRECISION}}</p>
-    <p>Mean Square Error: {{i.RECALL}}</p>
-{% endfor %}
-    
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<div class="container mt-5">
+    <div class="jumbotron">
+        <h1>Classification Models</h1>
+        <p>Performance based on different metrics</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <table class="table table-hover">
+        <thead>
+            <tr class="table-dark">
+                <th scope="col">Models</th>
+                <th scope="col">F1_Score</th>
+                <th scope="col">Precision</th>
+                <th scope="col">Recall</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Adaboost</th>
+                {% for i in adaboost %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Decision Tree</th>
+                {% for i in decision_tree %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Extra Trees</th>
+                {% for i in extra_trees %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">GaussianNB</th>
+                {% for i in gaussianNB %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Gradient Boosting</th>
+                {% for i in gradient_boosting %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">K Nearest Neighbors</th>
+                {% for i in k_nearest_neighbors %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Libsvm SVC</th>
+                {% for i in libsvm_svc %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">MLP</th>
+                {% for i in mlp %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th scope="row">Random Forest</th>
+                {% for i in random_forest %}
+                    <td>{{i.F1_Score}}</td>
+                    <td>{{i.PRECISION}}</td>
+                    <td>{{i.RECALL}}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endblock %}

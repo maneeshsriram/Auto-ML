@@ -1,80 +1,123 @@
 
-<h1>Adaboost</h1>
-{% for i in adaboost %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-<h1>ARD Regression</h1>
-{% for i in ard_regression %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
+    <div class="container mt-5">
+        <div class="jumbotron">
+            <h1>Regression Models</h1>
+            <p>Performance based on different metrics</p>
+        </div>
+    </div>
 
-<h1>Decision Tree</h1>
-{% for i in decision_tree %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
+        <div class="container mb-5">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="table-dark">
+                        <th scope="col">Models</th>
+                        <th scope="col">Adjusted R2</th>
+                        <th scope="col">Mean absolute error</th>
+                        <th scope="col">Mean square error</th>
+                        <th scope="col">Root mean square error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Adaboost</th>
+                        {% for i in adaboost %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">ARD Regression</th>
+                        {% for i in ard_regression %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">Decision Tree</th>
+                        {% for i in decision_tree %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">Extra Trees</th>
+                        {% for i in extra_trees %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">Gaussian Process</th>
+                        {% for i in gaussian_process %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">Gradient Boosting</th>
+                        {% for i in gradient_boosting %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">K Nearest Neighbors</th>
+                        {% for i in k_nearest_neighbors %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">Libsvm SVRr</th>
+                        {% for i in libsvm_svr %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">MLP</th>
+                        {% for i in mlp %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row">Random Forest</th>
+                        {% for i in random_forest %}
+                            <td>{{i.adjr}}</td>
+                            <td>{{i.mae}}</td>
+                            <td>{{i.mse}}</td>
+                            <td>{{i.rmse}}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-<h1>Extra Trees</h1>
-{% for i in extra_trees %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
 
-<h1>Guassian Process</h1>
-{% for i in gaussian_process %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
 
-<h1>Gradient Boosting</h1>
-{% for i in gradient_boosting %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
 
-<h1>K Nearest Neighbors</h1>
-{% for i in k_nearest_neighbors %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
-
-<h1>Libsvm SVR</h1>
-{% for i in libsvm_svr %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
-
-<h1>MLP</h1>
-{% for i in mlp %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
-
-<h1>Random Forest</h1>
-{% for i in random_forest %}
-    <p>Adjusted R2: {{i.adjr}}</p>
-    <p>Mean Average Error: {{i.mae}}</p>
-    <p>Mean Square Error: {{i.mse}}</p>
-    <p>Root Mean Square Error: {{i.rmse}}</p>
-{% endfor %}
+{% endblock %}

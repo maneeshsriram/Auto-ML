@@ -195,7 +195,8 @@ def linear(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -218,7 +219,8 @@ def ridge(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -241,7 +243,8 @@ def lasso(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -264,7 +267,8 @@ def enr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -290,7 +294,8 @@ def ard(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -313,7 +318,8 @@ def sgd(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -336,7 +342,8 @@ def svr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -359,7 +366,8 @@ def dtr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -382,7 +390,8 @@ def rfr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -405,7 +414,8 @@ def gbr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -428,7 +438,8 @@ def lgbm(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -451,8 +462,10 @@ def xgbr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:12]
     }
+    print(model)
     return render(request, 'webpages/results/resListRegModels.html', data)
 
 def guassian(request):
@@ -474,7 +487,8 @@ def guassian(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -497,7 +511,8 @@ def knr(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -520,7 +535,8 @@ def mlp(request):
         'mae': mae,
         'mse': mse,
         'rmse': rmse,
-        'adj_rsquared': round(adj_rsquared, 2)
+        'adj_rsquared': round(adj_rsquared, 2),
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
 
@@ -544,7 +560,8 @@ def logistic(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec': recall,
+        'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -566,7 +583,8 @@ def svc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -588,7 +606,8 @@ def dtc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -610,7 +629,8 @@ def gaussianNB(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -632,7 +652,8 @@ def multinomialNB(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -654,7 +675,8 @@ def sgdc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -676,7 +698,8 @@ def knnc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -698,7 +721,8 @@ def rfc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -720,7 +744,8 @@ def gbc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -742,7 +767,8 @@ def lgbmc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
@@ -764,7 +790,8 @@ def xgbc(request):
     data = {
         'f1_score': f1,
         'pre' : precision,
-        'rec' : recall
+        'rec' : recall,
+        'model' : str(model)[:13]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
 
