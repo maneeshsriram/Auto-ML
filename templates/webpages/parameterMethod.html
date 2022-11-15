@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/parameter.jpeg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <h1>Parameter Tuning</h1>
+
+            <form action="{% url 'modelmaking' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="dropdown">
+                    <button class="btn btn-default" type="button" data-toggle="dropdown">
+                        Choose Tuning method
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-submenu">
+                            <a href="{% url '' %}">Random CV</a>
+                            <a href="{% url '' %}">Grid CV</a>
+                            <a href="{% url '' %}">Bayesian Optimization</a>
+                            <a href="{% url '' %}">Genetic Optimization</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

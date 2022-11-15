@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/parameter.jpeg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <h1>Parameter Tuning</h1>
+
+            <form action="{% url 'tuningPkl' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBxfile">
+                    <span> Upload Dataset</span>
+                    <input type="file" class="abc" name="csvfile" accept=".csv" required>
+                </div>
+                <div class="inputBx">
+                    <span>Target variable</span>
+                    <input type="Text" placeholder="" name="tar">
+                </div>
+
+                <div class="inputBxfile">
+                    <span> Upload Model</span>
+                    <input type="file" class="abc" name="pklfile" accept=".csv" required>
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

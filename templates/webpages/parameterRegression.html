@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/parameter.jpeg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <h1>Parameter Tuning</h1>
+
+
+
+
+            <form action="{% url 'tuningMethod' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <label for="models" class="h3 pr-3">Regression Models</label>
+                <select name="mod" id="models" class="p-2 ml-1">
+                    <option value="linear">Linear</option>
+                    <option value="linear">Ridge</option>
+                    <option value="linear">Lasso</option>
+                    <option value="ElasticNet">ElasticNet</option>
+                    <option value="SGD">SGD</option>
+                    <option value="LGBM">LGBM</option>
+                    <option value="XGB">XGB</option>
+                    <option value="ARDRegression">ARDRegression</option>
+                    <option value="AdaBoost">AdaBoost</option>
+                    <option value="DecisionTree">DecisionTree</option>
+                    <option value="ExtraTrees">ExtraTrees</option>
+                    <option value="GaussianProcess">GaussianProcess</option>
+                    <option value="HistGradientBoosting">HistGradientBoosting</option>
+                    <option value="KNeighbors">KNeighbors</option>
+                    <option value="SVR">SVR</option>
+                    <option value="MLP">MLP</option>
+                    <option value="RandomForest">RandomForest</option>
+                </select>
+
+                <label for="metrics" class="h3 pr-3">Regression Metrics</label>
+                <select name="met" id="metrics" class="p-2 ml-1">
+                    <option value="MAE">MAE</option>
+                    <option value="MSE">MSE</option>
+                    <option value="RMSE">RMSE</option>
+                    <option value="AdjR2">Adjusted R2</option>
+                </select>
+
+                <div class="inputBx mt-4">
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

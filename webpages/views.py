@@ -15,13 +15,11 @@ def home(request):
     return render(request, 'webpages/home.html')
 
 
+def overview(request):
+    return render(request, 'webpages/overview.html')
 
 
-
-def preprocessing(request):
-    return render(request, 'webpages/preprocessing.html')
-
-def resPreprocessing(request):
+def resOverview(request):
     if request.method == 'POST':
         file = request.FILES['csvfile']
         numericaldata = request.POST['num']
@@ -82,7 +80,16 @@ def resPreprocessing(request):
             'categoricalValues': categoricalValues,
         }
         print(numericalValues)
-    return render(request, 'webpages/results/resPreprocessing.html', data)
+    return render(request, 'webpages/results/resOverview.html', data)
+
+
+
+
+def preprocessing(request):
+    return render(request, 'webpages/preprocessing.html')
+
+def resPreprocessing(request):
+    return render(request, 'webpages/preprocessing.html')
 
 
 
@@ -187,6 +194,8 @@ def resVisualization(request):
             'scatter': scatter
         }
     return render(request, 'webpages/results/resVisualization.html', data)
+
+
 
 
 

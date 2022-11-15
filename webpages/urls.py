@@ -3,6 +3,10 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    
+    path('overview', views.overview, name='overview'),
+    path('resOverview', views.resOverview, name='resOverview'),
+
     path('preprocessing', views.preprocessing, name='preprocessing'),
     path('resPreprocessing', views.resPreprocessing, name='resPreprocessing'),
 

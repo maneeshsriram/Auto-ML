@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/parameter.jpeg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <h1>Parameter Tuning</h1>
+
+
+
+
+            <form action="{% url 'tuningMethod' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <label for="models" class="h3 pr-3">Classification Models</label>
+                <select name="mod" id="models" class="p-2 ml-1">
+                    <option value="Logistic">Logistic</option>
+                    <option value="MultinomialNB">MultinomialNB</option>
+                    <option value="SGD">SGD</option>
+                    <option value="LGBM">LGBM</option>
+                    <option value="XGB">XGB</option>
+                    <option value="AdaBoost">AdaBoost</option>
+                    <option value="DecisionTree">DecisionTree</option>
+                    <option value="ExtraTrees">ExtraTrees</option>
+                    <option value="GaussianNB">GaussianNB</option>
+                    <option value="HistGradientBoosting">HistGradientBoosting</option>
+                    <option value="KNeighbors">KNeighbors</option>
+                    <option value="SVC">SVC</option>
+                    <option value="MLP">MLP</option>
+                    <option value="RandomForest">RandomForest</option>
+                </select>
+
+                <label for="metrics" class="h3 pr-3">Classification Metrics</label>
+                <select name="met" id="metrics" class="p-2 ml-1">
+                    <option value="Acc">Accuracy</option>
+                    <option value="Pre">Precision</option>
+                    <option value="Rec">Recall</option>
+                    <option value="F1">F1 Score</option>
+                </select>
+
+                <div class="inputBx mt-4">
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
