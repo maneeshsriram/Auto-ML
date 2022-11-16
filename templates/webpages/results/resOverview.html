@@ -3,201 +3,211 @@
 
 
 {% block content %}
-<link rel="stylesheet" href="{% static './css/resOverview.css' %}">
 
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <section class="m-5">
-            <div>
-                <div class="mainone">
-                    <h1 class="mb-5">DATA OVERVIEW</h1>
-                    <h2 class="text-center">Summary</h2>
-                    <div class="summary mx-5 mt-3 mb-5">
-                        <table>
-                            <tr>
-                                <td class="p-3">
-                                    Number of Columns
-                                </td>
-                                <td class="p-3">
-                                    {{numberOfColumns}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-3">
-                                    Number of Rows 
-                                </td>
-                                <td class="p-3">
-                                    {{numberOfRows}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-3">
-                                    Number of Duplicates
-                                </td>
-                                <td class="p-3">
-                                    {{numberOfDuplicate}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-3">
-                                    Number of Numerical Columns 
-                                </td>
-                                <td class="p-3">
-                                    {{numberOfNumericalColumns}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="p-3">
-                                    Number of Categorical Columns 
-                                </td>
-                                <td class="p-3">
-                                    {{numberOfCategoricalColumns}}
-                                </td>
-                            </tr>
-                        </table>
+        <div class="container">
+            <div class="jumbotron">
+                <h1>Data Overview</h1>
+                <p>Analysis of data</p>
+            </div>
+        </div>
+        <div class="container">
+            <table class="table table-striped table-bordered table-hover">
+
+                <tbody>
+                    <tr>
+                        <th scope="row" class="text-primary">Number of columns</th>
+                        <td>{{numberOfColumns}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row" class="text-primary">Number of rows</th>
+                        <td>{{numberOfRows}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row" class="text-primary">Number of Duplicates</th>
+                        <td>{{numberOfDuplicate}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row" class="text-primary">Number of numerical columns</th>
+                        <td>{{numberOfNumericalColumns}}</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row" class="text-primary">Number of categorical columns</th>
+                        <td>{{numberOfCategoricalColumns}}</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <br><br>
+        <div class="container">
+            <h2 class="text-primary"> Numerical Columns are:</h2>
+        </div>
+        <div class="container">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    {% for dict in numericalValues %}
+                    <div class="panel-heading">
+                        <h2 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                <b>{{dict.featureName}}</b></a>
+                        </h2>
                     </div>
+                    <div id="collapse1" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <table class="table table-striped  table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Feature Name</th>
+                                        <td>{{dict.featureName}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Count</th>
+                                        <td>{{dict.CountOfNonEmptyValues}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Total missing values</th>
+                                        <td>{{dict.CountOfEmptyValues}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">% of Missing values</th>
+                                        <td>{{dict.PercentageOfEmptyValues}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Mean</th>
+                                        <td>{{dict.mean}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Median</th>
+                                        <td>{{dict.median}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Mode</th>
+                                        <td>{{dict.mode}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Variance</th>
+                                        <td>{{dict.variance}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Standard deviation</th>
+                                        <td>{{dict.standardDeviation}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Minimum value</th>
+                                        <td>{{dict.minimumValue}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Maximum value</th>
+                                        <td>{{dict.maximumValue}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Q1</th>
+                                        <td>{{dict.q1}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Q2</th>
+                                        <td>{{dict.q2}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Q3</th>
+                                        <td>{{dict.q3}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">IQR</th>
+                                        <td>{{dict.iqr}}</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th scope="row" class="text-primary">Kurtosis</th>
+                                        <td>{{dict.kurtosis}}</td>
+
+                                    </tr>
 
 
-                    <div class="flex-container">
-
-                    
-                                        <div class="num pt-5 flex-child">
-                                            <h2 class="title ml-4 ">Numerical Data</h2>
-                                            <div class="mx-5 mb-5">
-                                            {% for dict in numericalValues %}
-                                            <table class="my-5">
-                                                <tr>
-                                                    <td class="p-3">
-                                                        Feature Name
-                                                    </td>
-                                                    <td class="p-3">
-                                                        {{dict.featureName}}
-                                                    </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">
-                                                        Count
-                                                    </td>
-                                                    <td class="p-3">
-                                                        {{dict.CountOfNonEmptyValues}}
-                                                    </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">
-                                                        Total missing values
-                                                    </td>
-                                                    <td class="p-3">
-                                                        {{dict.CountOfEmptyValues}}
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="p-3">% of missing values </td>
-                                                    <td class="p-3"> {{dict.PercentageOfEmptyValues}} </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="p-3">Mean </td>
-                                                    <td class="p-3">{{dict.mean}}</td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3"> Median </td>
-                                                    <td class="p-3"> {{dict.median}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3"> Mode </td>
-                                                    <td class="p-3"> {{dict.mode}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3"> Variance </td>
-                                                    <td class="p-3"> {{dict.variance}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3"> Standard Deviation </td>
-                                                    <td class="p-3"> {{dict.standardDeviation}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3"> Minimum Value </td>
-                                                    <td class="p-3"> {{dict.minimumValue}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3"> Maximum Value </td>
-                                                    <td class="p-3"> {{dict.maximumValue}}</td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">Q1 </td>
-                                                    <td class="p-3">{{dict.q1}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">Q2 </td>
-                                                    <td class="p-3">{{dict.q2}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">Q3 </td>
-                                                    <td class="p-3">{{dict.q3}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">IQR </td>
-                                                    <td class="p-3">{{dict.iqr}} </td>
-                                                </tr>
-                                        
-                                                <tr>
-                                                    <td class="p-3">Kurtosis </td>
-                                                    <td class="p-3">{{dict.kurtosis}} </td>
-                                                </tr>
-                                            </table>
-                                            {% endfor %}
-                                            </div>
-                                        </div>
-                                        
-                                        
-                                        <div class="cat flex-child ml-5">
-                                            <h2 class="title ml-4 pt-5">Categorical Data</h2>
-                                            {% for dict in categoricalValues %}
-                                            <table class="m-5">
-                                                <tr>
-                                                    <td class="p-3">Feature Name</td>
-                                                    <td class="p-3">{{dict.featureName}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="p-3">Count </td>
-                                                    <td class="p-3">{{dict.CountOfNonEmptyValues}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="p-3">Total missing values </td>
-                                                    <td class="p-3">{{dict.CountOfEmptyValues}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="p-3">% of missing values </td>
-                                                    <td class="p-3">{{dict.PercentageOfEmptyValues}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="p-3">Mode</td>
-                                                    <td class="p-3"> {{dict.mode}}</td>
-                                                </tr>
-                                            </table>
-                                        
-                                            {% endfor %}
-                                        
-                                        
-                                        </div>
-
-
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <br><br>
+            <div class="container">
+                <h2 class="text-primary">Categorical columns are:</h2>
+            </div>
+
+            <div class="container">
+                <div class="panel-group" id="accordion">
+                    {% for dict in categoricalValues %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                                    <b>{{dict.featureName}}</b></a>
+                            </h2>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table table-striped table-hover">
+
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row" class="text-primary">Feature Name</th>
+                                            <td>{{dict.featureName}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-primary">Count</th>
+                                            <td>{{dict.CountOfNonEmptyValues}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-primary">Total missing values</th>
+                                            <td>{{dict.CountOfEmptyValues}}</td>
+
+                                        </tr>
+                                        <tr>
+                                            <th scope="row" class="text-primary">% of Missing values</th>
+                                            <td>{{dict.PercentageOfEmptyValues}}</td>
+
+                                        </tr>
+
+                                        <tr>
+                                            <th scope="row" class="text-primary">Mode</th>
+                                            <td>{{dict.mode}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
 </section>
 
 
-
-
-{% endblock %}
+    {% endblock %}

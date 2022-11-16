@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/prediction.jpg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <h1>Prediction</h1>
+
+            <form action="{% url 'prediction' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBxfile">
+                    <span> Upload Dataset</span>
+                    <input type="file" class="abc" name="csvfile" accept=".csv" readonly>
+                </div>
+                <div class="inputBx">
+                    <span>Target variable</span>
+                    <input type="Text" name="tar" required>
+                </div>
+                <div class="inputBxfile">
+                    <span> Upload Model</span>
+                    <input type="file" class="abc" name="pklfile" required>
+                </div>
+                <label for="models" class="h3 pr-3 mb-5 pb-3">Choose Model</label>
+                <select name="model" id="models" class="p-2 ml-1">
+                    <option value="reg">Regression</option>
+                    <option value="clas">Classification</option>
+                </select>
+                <div class="inputBx">
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

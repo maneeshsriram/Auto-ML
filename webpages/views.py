@@ -3,10 +3,13 @@ from django.shortcuts import render
 
 import pandas as pd
 import numpy as np
-import random
+import joblib
+from joblib import Parallel, delayed
 import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -198,23 +201,55 @@ def resVisualization(request):
 
 
 
-
-
-
-
-
-
-
 def parameter(request):
     return render(request, 'webpages/parameter.html')
 
-
-def prediction(request):
-    return render(request, 'webpages/prediction.html')
-
-
 def deployment(request):
     return render(request, 'webpages/deployment.html')
+
+
+
+
+def predictionDataset(request):
+    return render(request, 'webpages/predictionDataset.html')
+
+
+
+def prediction(request):
+    if request.POST['model'] == 'clas':
+        model = joblib.load(request.FILES['pklfile'])
+        df = pd.read_csv(request.FILES['csvfile'])
+        col_name = (df.columns.tolist())
+        Y = col_name[int(request.POST['tar'])]
+        col_name.remove(Y)
+        X = col_name
+        X = df.drop(Y, axis=1)
+        Y = df[Y]
+        x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=100)
+        precision = cross_val_score(model, x_test, y_test,scoring='precision_weighted',error_score='raise').mean()
+        recall = cross_val_score(model, x_test, y_test,scoring='recall_weighted').mean()
+        f1 = cross_val_score(model, x_test, y_test,scoring='f1_weighted').mean()
+        accuracy = cross_val_score(model, x_test, y_test,scoring='accuracy').mean()
+        data = {
+            "pre": precision,
+            "rec": recall,
+            "f1_score": f1,
+            "acc":accuracy,
+            "model": model
+        }
+        return render(request, 'webpages/results/resListClassModels.html', data)
+    else:
+        pass
+    return render(request, 'webpages/results/resListRegModels.html.html', data)
+
+
+    
+
+    
+    
+
+
+
 
 
 

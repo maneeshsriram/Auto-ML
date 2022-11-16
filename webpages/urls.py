@@ -14,6 +14,8 @@ urlpatterns = [
     path('resVisualization', views.resVisualization, name='resVisualization'),
     
     path('parameter', views.parameter, name='parameter'),
-    path('prediction', views.prediction, name='prediction'),
     path('deployment', views.deployment, name='deployment'),
+
+    path('predictionDataset', views.predictionDataset, name='predictionDataset'),
+    path('prediction', views.prediction, name='prediction'),
 ]
