@@ -1,7 +1,7 @@
 from sklearn.model_selection import train_test_split
 from django.shortcuts import render
 from django.core.files.storage import default_storage
-
+from django.http import HttpResponse
 import numpy as np
 import pandas as pd
 from sklearn.datasets import load_iris
@@ -96,6 +96,31 @@ def Regresult_metric(model,X,y):
   return adj_rsquared, mae, mse, rmse
 
 
+
+
+
+def save_model(model):
+    import joblib 
+    joblib.dump(model, 'filename.pkl')
+    f = open("filename.pkl", "rb")
+    content_type = 'application/octet-stream'
+    file = f.read()
+    response = HttpResponse(file, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename="model.pkl"'
+    return response 
+
+def paramDownloadModel(request):
+    response = save_model(gridcv)
+    return response
+
+def paramDownloadModelRandom(request):
+    response = save_model(randomcv)
+    return response
+
+
+
+
+
 # Classification Grid
 def logistic_cls_grid(metric):
     from sklearn.linear_model import LogisticRegression
@@ -110,10 +135,10 @@ def logistic_cls_grid(metric):
         'max_iter': max_iter
     }
     model = LogisticRegression()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid, cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
     precision, recall, f1, accuracy = result_metric(gridcv, X_train, y_train)
-    # return gridcv
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -132,6 +157,7 @@ def multinomial_cls_grid(metric):
         'alpha': alpha
     }
     model = MultinomialNB()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
@@ -167,6 +193,7 @@ def sgd_cls_grid(metric):
 
     }
     model = SGDClassifier()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
@@ -196,6 +223,7 @@ def lgbm_cls_grid(metric):
         'min_child_samples': min_child_samples
     }
     model = LGBMClassifier()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
@@ -228,6 +256,7 @@ def xgb_cls_grid(metric):
         'colsample_bytree': colsample_bytree
     }
     model = XGBClassifier()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
@@ -253,6 +282,7 @@ def adaboost_cls_grid(metric):
         'n_estimators': n_estimators
     }
     model = AdaBoostClassifier()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
@@ -285,6 +315,7 @@ def decisionTree_cls_grid(metric):
             'criterion': criterion
             }
     model = DecisionTreeClassifier()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=choice(metric))
     gridcv.fit(X_train, y_train)
@@ -318,6 +349,7 @@ def ExtraTree_cls_grid(metric):
           'criterion': criterion
           }
   model = ExtraTreesClassifier()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -340,6 +372,7 @@ def gaussian_cls_grid(metric):
   grid = {'var_smoothing': var_smoothing
           }
   model = GaussianNB()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -375,6 +408,7 @@ def histGradient_cls_grid(metric):
           'loss': loss
           }
   model = HistGradientBoostingClassifier()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -406,6 +440,7 @@ def KNeighbors_cls_grid(metric):
           'p': p,
           }
   model = KNeighborsClassifier()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -435,6 +470,7 @@ def svc_reg_grid(metric):
           'max_iter': max_iter
           }
   model = SVC()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -463,6 +499,7 @@ def mlp_cls_grid(metric):
       'max_iter': max_iter
   }
   model = MLPClassifier()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -498,6 +535,7 @@ def randomForest_cls_grid(metric):
           'criterion': criterion}
 
   model = RandomForestClassifier()
+  global gridcv
   gridcv = GridSearchCV(estimator=model, param_grid=grid,
                         cv=3, n_jobs=-1, scoring=choice(metric))
   gridcv.fit(X_train, y_train)
@@ -523,6 +561,7 @@ def linear_reg_grid(metric='Adjusted R2'):
           'normalize':normalize
           }
     model=LinearRegression()
+    global gridcv
     gridcv = GridSearchCV(estimator=model, param_grid=grid,
                           cv=3, n_jobs=-1, scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
@@ -534,6 +573,7 @@ def linear_reg_grid(metric='Adjusted R2'):
         'rmse': rmse,
         'model': str(model)[:-2]
     }
+    save_model(gridcv)
     return data
 
 def ridge_reg_grid(metric='Adjusted R2'):
@@ -551,6 +591,7 @@ def ridge_reg_grid(metric='Adjusted R2'):
           'tol':tol
           }
     model=Ridge()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -573,6 +614,7 @@ def lasso_reg_grid(metric='Adjusted R2'):
           'max_iter':max_iter
           }
     model=Lasso()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -597,6 +639,7 @@ def elastic_net_reg_grid(metric='Adjusted R2'):
           'l1_ratio':l1_ratio
           }
     model=ElasticNet()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -627,6 +670,7 @@ def sgd_reg_grid(metric='Adjusted R2'):
           'learning_rate':learning_rate
           }
     model=SGDRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -654,6 +698,7 @@ def lgbm_reg_grid(metric='Adjusted R2'):
           'learning_rate':learning_rate
           }
     model=LGBMRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -686,6 +731,7 @@ def xgb_reg_grid(metric='Adjusted R2'):
         'learning_rate':learning_rate
           }
     model=XGBRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -715,6 +761,7 @@ def ard_reg_grid(metric='Adjusted R2'):
         'lambda_2':lambda_2
           }
     model=ARDRegression()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -740,6 +787,7 @@ def adaboost_reg_grid(metric='Adjusted R2'):
         'loss':loss
           }
     model=AdaBoostRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -770,6 +818,7 @@ def decisiontree_reg_grid(metric='Adjusted R2'):
         'criterion':criterion
           }
     model=DecisionTreeRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -801,6 +850,7 @@ def extratree_reg_grid(metric='Adjusted R2'):
         'criterion':criterion
           }
     model=ExtraTreesRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -826,6 +876,7 @@ def gaussian_reg_grid(metric='Adjusted R2'):
         'normalize_y':normalize_y
           }
     model=GaussianProcessRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -859,6 +910,7 @@ def histgradient_reg_grid(metric='Adjusted R2'):
         'loss':loss
           }
     model=HistGradientBoostingRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -888,6 +940,7 @@ def kneighbor_reg_grid(metric='Adjusted R2'):
         'p':p
           }
     model=KNeighborsRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -914,6 +967,7 @@ def svr_reg_grid(metric='Adjusted r2'):
         'max_iter':max_iter
           }
     model=SVR()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -938,6 +992,7 @@ def mlp_reg_grid(metric='Adjusted R2'):
         'max_iter':max_iter
           }
     model=MLPRegressor()
+    global gridcv
     gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
     gridcv.fit(X_train,y_train)
     adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -974,6 +1029,7 @@ def randomForest_reg_grid(metric='Adjusted R2'):
 
  
   model=RandomForestRegressor()
+  global gridcv
   gridcv=GridSearchCV(estimator=model,param_grid=grid,cv=3,n_jobs=-1,scoring=Regchoice(metric))
   gridcv.fit(X_train,y_train)
   adj_rsquared, mae, mse, rmse = Regresult_metric(gridcv, X_train, y_train)
@@ -1024,10 +1080,10 @@ def parameterGrid(request):
             data = mlp_reg_grid(metric)
         if model == 'RandomForest':
             data = randomForest_reg_grid(metric)
-        return render(request, 'webpages/results/resListRegModels.html', data)
+        return render(request, 'webpages/results/resParamGridList.html', data)
     else:
         if model == 'Logistic':
-            data = logistic_cls_grid(metric)
+            data = logistic_cls_grid(metric) 
         elif model == 'MultinomialNB':
             data = multinomial_cls_grid(metric)
         elif model == 'SGD':
@@ -1054,7 +1110,7 @@ def parameterGrid(request):
             data = mlp_cls_grid(metric)
         elif model == 'RandomForest':
             data = randomForest_cls_grid(metric)
-    return render(request, 'webpages/results/resListClassModels.html', data)
+    return render(request, 'webpages/results/resParamGridClass.html', data)
 
 
 
@@ -1092,6 +1148,7 @@ def logistic_cls_random(metric='F1 Score'):
             'max_iter':max_iter
           }
   model=LogisticRegression()
+  global randomcv
   randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                random_state=100,n_jobs=-1,scoring=choice(metric))
 
@@ -1115,11 +1172,12 @@ def multinomial_cls_random(metric='F1 Score'):
         'alpha': alpha
     }
     model = MultinomialNB()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -1150,11 +1208,12 @@ def sgdclassifier_cls_random(metric='F1 Score'):
 
     }
     model = SGDClassifier()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -1179,11 +1238,12 @@ def lgbmclassifier_cls_random(metric='F1 Score'):
         'min_child_samples':min_child_samples
           }
     model=LGBMClassifier()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                random_state=100,n_jobs=-1,scoring=choice(metric))
 
     randomcv.fit(X_train,y_train)
-    precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -1212,11 +1272,12 @@ def xgbclassifier_cls_random(metric='F1 Score'):
         'colsample_bytree': colsample_bytree
     }
     model = XGBClassifier()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -1237,11 +1298,12 @@ def adaboostclassifier_cls_random(metric='F1 Score'):
         'n_estimators': n_estimators
     }
     model = AdaBoostClassifier()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -1269,11 +1331,12 @@ def decisionclassifier_cls_random(metric='F1 Score'):
                    'criterion': criterion
                    }
     model = DecisionTreeClassifier()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
@@ -1302,11 +1365,12 @@ def ExtraTree_cls_random(metric='F1 Score'):
                  'criterion': criterion
                  }
   model = ExtraTreesClassifier()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1324,11 +1388,12 @@ def gaussian_cls_random(metric='F1 Score'):
   random_grid = {'var_smoothing': var_smoothing
                  }
   model = GaussianNB()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1355,11 +1420,12 @@ def histGradient_cls_random(metric='F1 Score'):
                  'max_bins': max_bins
                  }
   model = HistGradientBoostingClassifier()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1386,11 +1452,12 @@ def KNeighbors_cls_random(metric='F1 Score'):
                  'p': p,
                  }
   model = KNeighborsClassifier()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1415,11 +1482,12 @@ def svr_reg_random(metric='F1 Score'):
                  'max_iter': max_iter
                  }
   model = SVC()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1443,11 +1511,12 @@ def mlp_cls_random(metric='F1 Score'):
       'max_iter': max_iter
   }
   model = MLPClassifier()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1478,10 +1547,11 @@ def randomForest_cls_random(metric='F1 Score'):
                  'criterion': criterion}
 
   model = RandomForestClassifier()
+  global randomcv
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
@@ -1503,6 +1573,7 @@ def linear_reg_random(metric='Adjusted R2'):
                    'normalize': normalize
                    }
     model = LinearRegression()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=Regchoice(metric))
     randomcv.fit(X_train, y_train)
@@ -1526,6 +1597,7 @@ def ridge_reg_random(metric='Adjusted R2'):
                    'max_iter': max_iter
                    }
     model = Ridge()
+    global randomcv
     randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                   random_state=100, n_jobs=-1, scoring=Regchoice(metric))
 
@@ -1550,6 +1622,7 @@ def lasso_reg_random(metric='Adjusted R2'):
           'max_iter':max_iter
           }
     model=Lasso()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                       random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1576,6 +1649,7 @@ def elastic_net_reg_random(metric='Adjusted R2'):
           'l1_ratio':l1_ratio
           }
     model=ElasticNet()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                       random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1608,6 +1682,7 @@ def sgd_reg_random(metric='Adjusted R2'):
           'learning_rate':learning_rate
           }
     model=SGDRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1637,6 +1712,7 @@ def lgbm_reg_random(metric='Adjusted R2'):
           'learning_rate':learning_rate
           }
     model=LGBMRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1671,6 +1747,7 @@ def xgb_reg_random(metric='Adjusted R2'):
         'learning_rate':learning_rate
           }
     model=XGBRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1702,6 +1779,7 @@ def ard_reg_random(metric='Adjusted R2'):
         'lambda_2':lambda_2
           }
     model=ARDRegression()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1729,6 +1807,7 @@ def adaboost_reg_random(metric='Adjusted R2'):
         'loss':loss
           }
     model=AdaBoostRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
     randomcv.fit(X_train,y_train)
@@ -1760,6 +1839,7 @@ def decisiontree_reg_random(metric='Adjusted R2'):
         'criterion':criterion
           }
     model=DecisionTreeRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
     randomcv.fit(X_train,y_train)
@@ -1792,6 +1872,7 @@ def extratree_reg_random(metric='Adjusted R2'):
         'criterion':criterion
           }
     model=ExtraTreesRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1819,6 +1900,7 @@ def gaussian_reg_random(metric='Adjusted R2'):
         'normalize_y':normalize_y
           }
     model=GaussianProcessRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
     randomcv.fit(X_train,y_train)
@@ -1853,6 +1935,7 @@ def histgradient_reg_random(metric='Adjusted R2'):
         'loss':loss
           }
     model=HistGradientBoostingRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -1884,6 +1967,7 @@ def kneighbor_reg_random(metric='Adjusted R2'):
         'p':p
           }
     model=KNeighborsRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
     randomcv.fit(X_train,y_train)
@@ -1911,6 +1995,7 @@ def svr_reg_random(metric='Adjusted R2'):
         'max_iter':max_iter
           }
     model=SVR()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
     randomcv.fit(X_train,y_train)
@@ -1936,6 +2021,7 @@ def mlp_reg_random(metric='Adjusted R2'):
         'max_iter':max_iter
           }
     model=MLPRegressor()
+    global randomcv
     randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                     random_state=100,n_jobs=-1,scoring=Regchoice(metric))
     randomcv.fit(X_train,y_train)
@@ -1972,6 +2058,7 @@ def randomForest_reg_random(metric='Adjusted R2'):
 
  
   model=RandomForestRegressor()
+  global randomcv
   randomcv=RandomizedSearchCV(estimator=model,param_distributions=random_grid,n_iter=100,cv=3,
                                                                       random_state=100,n_jobs=-1,scoring=Regchoice(metric))
 
@@ -2026,7 +2113,7 @@ def parameterRandom(request):
             data = mlp_reg_random(metric)
         if model == 'RandomForest':
             data = randomForest_reg_random(metric)
-        return render(request, 'webpages/results/resListRegModels.html', data)
+        return render(request, 'webpages/results/resParamRandomReg.html', data)
     else:
         if model == 'Logistic':
             data = logistic_cls_random(metric)
@@ -2056,6 +2143,6 @@ def parameterRandom(request):
             data = mlp_cls_random(metric)
         elif model == 'RandomForest':
             data = randomForest_cls_random(metric)
-    return render(request, 'webpages/results/resListClassModels.html', data)
+    return render(request, 'webpages/results/resParamRandomClass.html', data)
 
 

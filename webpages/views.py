@@ -26,7 +26,6 @@ def resOverview(request):
     if request.method == 'POST':
         file = request.FILES['csvfile']
         numericaldata = request.POST['num']
-        targetvariable = request.POST['tar']
 
         df = pd.read_csv(file)
 
@@ -239,8 +238,30 @@ def prediction(request):
         }
         return render(request, 'webpages/results/resListClassModels.html', data)
     else:
-        pass
-    return render(request, 'webpages/results/resListRegModels.html.html', data)
+            model = joblib.load(request.FILES['pklfile'])
+            df = pd.read_csv(request.FILES['csvfile'])
+            col_name = (df.columns.tolist())
+            Y = col_name[int(request.POST['tar'])]
+            col_name.remove(Y)
+            X = col_name
+            X = df.drop(Y, axis=1)
+            Y = df[Y]
+            x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=100)
+            r_squared = cross_val_score(model, x_test, y_test,  scoring="r2", cv=5).mean()
+            n=x_test.shape[0]
+            p=x_test.shape[1]
+            adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
+            mae = (-1) *cross_val_score(model, x_test, y_test,  scoring="neg_mean_absolute_error").mean()
+            mse = (-1) *cross_val_score(model, x_test, y_test,  scoring="neg_mean_squared_error").mean()
+            rmse= (-1) *cross_val_score(model, x_test, y_test,  scoring="neg_root_mean_squared_error").mean()
+            data = {
+                "adj_rsquared": adj_rsquared,
+                "mae": mae,
+                "mse": mse,
+                "rmse": rmse,
+                "model": model
+            }
+            return render(request, 'webpages/results/resListRegModels.html', data)
 
 
     

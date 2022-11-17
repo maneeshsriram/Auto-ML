@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<div class="container mt-5">
+    <div class="jumbotron">
+        <h1>{{model}}</h1>
+        <p>Performance based on different metrics</p>
+    </div>
+</div>
+
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr class="table-dark">
+                <th scope="col">Metric</th>
+                <th scope="col">Value</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Adjusted R2</th>
+                <td>{{adj_rsquared}}</td>
+
+            </tr>
+
+            <tr>
+                <th scope="row">Mean square error</th>
+                <td>{{mse}}</td>
+
+            </tr>
+
+            <tr>
+                <th scope="row">Root mean square error</th>
+                <td>{{rmse}}</td>
+
+            </tr>
+
+            <tr>
+                <th scope="row">Mean absolute error</th>
+                <td>{{mae}}</td>
+
+            </tr>
+
+        </tbody>
+    </table>
+    <button class="my-5 btn btn-block btn-outline-warning"><a href="{% url 'paramDownloadModelRandom' %}">Download
+            Model</a></button>
+</div>
+{% endblock %}
