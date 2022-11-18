@@ -13,4 +13,8 @@ urlpatterns = [
     
     path('parameterRandom', views.parameterRandom, name='parameterRandom'),
     path('paramDownloadModelRandom', views.paramDownloadModelRandom, name='paramDownloadModelRandom'),
+
+    path('parameterGenetic', views.parameterGenetic, name='parameterGenetic'),
+    path('parameterDownloadModelGenetic', views.parameterDownloadModelGenetic, name='parameterDownloadModelGenetic'),
+    path('parameterDownloadModelGeneticReg', views.parameterDownloadModelGeneticReg, name='parameterDownloadModelGeneticReg'),
 ]
