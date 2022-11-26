@@ -22,4 +22,5 @@ urlpatterns = [
     path('parameter/', include('parameter.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('pipeline/', include('pipeline.urls')),
 ]

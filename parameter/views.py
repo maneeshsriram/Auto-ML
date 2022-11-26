@@ -790,7 +790,7 @@ def adaboost_reg_grid(metric='Adjusted R2'):
     from sklearn.ensemble import AdaBoostRegressor
     from sklearn.model_selection import GridSearchCV
     X_train,y_train=common_imports()
-    n_estimators = [x for x in range(5, 1000,100)]
+    n_estimators = [x for x in range(100, 1000,100)]
     learning_rate=[10**x for x in range(-5,5)]
     loss=['linear','square','exponential']
     grid={
@@ -1810,7 +1810,7 @@ def adaboost_reg_random(metric='Adjusted R2'):
     from sklearn.ensemble import AdaBoostRegressor
     from sklearn.model_selection import RandomizedSearchCV
     X_train,y_train=common_imports()
-    n_estimators = [x for x in range(5, 1000,100)]
+    n_estimators = [x for x in range(100, 1000,100)]
     learning_rate=[10**x for x in range(-5,5)]
     loss=['linear','square','exponential']
     random_grid={
@@ -2893,7 +2893,7 @@ def ard_reg_genetic(metric='Adjusted R2'):
 def adaboost_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
-    n_estimators = [x for x in range(5, 1000, 100)]
+    n_estimators = [x for x in range(100, 1000, 100)]
     learning_rate = [10**x for x in range(-5, 5)]
     loss = ['linear', 'square', 'exponential']
     grid = {
