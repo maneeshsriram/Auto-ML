@@ -87,14 +87,6 @@ def resOverview(request):
 
 
 
-def preprocessing(request):
-    return render(request, 'webpages/preprocessing.html')
-
-def resPreprocessing(request):
-    return render(request, 'webpages/preprocessing.html')
-
-
-
 
 
 def visualization(request):
@@ -211,8 +203,6 @@ def deployment(request):
 
 def predictionDataset(request):
     return render(request, 'webpages/predictionDataset.html')
-
-
 
 def prediction(request):
     if request.POST['model'] == 'clas':

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/processing.png' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx my-5 pt-5">
+            <h1 class="mt-5 pt-3">Choose Methods</h1>
+            <ul class="list-group mb-5">
+                <li class="list-group-item">0) Skip</li>
+                <li class="list-group-item">1) Drop rows</li>
+                <li class="list-group-item">2) Drop col explicit</li>
+                <li class="list-group-item">3) Impute mean</li>
+                <li class="list-group-item">4) Impute median</li>
+                <li class="list-group-item">5) Impute mode</li>
+                <li class="list-group-item">6) Forward Fill</li>
+                <li class="list-group-item">7) Backward Fill</li>
+                <li class="list-group-item">8) Fill ramndom values</li>
+            </ul>
+            <form action="{% url 'resPreprocessing' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBx">
+                    <span>Enter the method numbers for each column</span>
+                    <input type="text" placeholder="Type here..." name="met">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}

@@ -7,9 +7,6 @@ urlpatterns = [
     path('overview', views.overview, name='overview'),
     path('resOverview', views.resOverview, name='resOverview'),
 
-    path('preprocessing', views.preprocessing, name='preprocessing'),
-    path('resPreprocessing', views.resPreprocessing, name='resPreprocessing'),
-
     path('visualization', views.visualization, name='visualization'),
     path('resVisualization', views.resVisualization, name='resVisualization'),
     

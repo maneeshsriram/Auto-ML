@@ -20,6 +20,7 @@ urlpatterns = [
     path('', include('webpages.urls')),
     path('model/', include('model.urls')),
     path('parameter/', include('parameter.urls')),
+    path('preprocessing/', include('preprocessing.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('pipeline/', include('pipeline.urls')),

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/processing.png' %}">
+    </div>
+    <div class="mt-5 pt-5 text-center">
+        <h1>Get Preprocessed Dataset (Outlier Detection)</h1>
+        <button class="btn btn-warning mt-4"><a href="{% url 'preprocessingDownload' %}">Download <i
+                    class="bi bi-cloud-arrow-down-fill"></i></a></button>
+    </div>
+    <br>
+    <div>
+        <!-- <button class="btn btn-light btn-sm" style="margin-top: 40em;"><a
+                href="{% url 'preprocessingOutlier' %}">Outlier Detection <i
+                    class="bi bi-arrow-bar-right text-dark"></i></a></button> -->
+    </div>
+</section>
+
+{% endblock %}

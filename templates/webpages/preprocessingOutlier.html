@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/processing.png' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx my-5 pt-5">
+            <h1 class="mt-5 pt-3">Choose Methods</h1>
+            <ul class="list-group mb-5">
+                <li class="list-group-item">0) Skip</li>
+                <li class="list-group-item">1) IQR</li>
+                <li class="list-group-item">2) Z Score</li>
+                <li class="list-group-item">3) ISO Forest</li>
+            </ul>
+            <form action="{% url 'resPreprocessingOutlier' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBx">
+                    <span>Enter the method numbers for each numerical column</span>
+                    <input type="text" placeholder="Type here..." name="Omet">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
