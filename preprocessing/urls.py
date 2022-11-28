@@ -17,8 +17,11 @@ urlpatterns = [
     path('resPreprocessingFeatureEncoding', views.resPreprocessingFeatureEncoding, name='resPreprocessingFeatureEncoding'),
 
     path('preprocessingFeatureSelection', views.preprocessingFeatureSelection, name='preprocessingFeatureSelection'),
-    path('preprocFS1', views.preprocFS1, name='preprocFS1'),
-    path('preprocFS2', views.preprocFS2, name='preprocFS2'),
-    path('preprocFS3', views.preprocFS3, name='preprocFS3'),
-    path('resPreprocessingFeatureSelection', views.resPreprocessingFeatureSelection, name='resPreprocessingFeatureSelection'),
+    path('resPreprFV', views.resPreprFV, name='resPreprFV'),
+    path('resPreprFC', views.resPreprFC, name='resPreprFC'),
+    path('resPreprFMC', views.resPreprFMC, name='resPreprFMC'), 
+    path('resPreprFMR', views.resPreprFMR, name='resPreprFMR'),
+    path('resPreprFA', views.resPreprFA, name='resPreprFA'),
+    path('resPreprER', views.resPreprER, name='resPreprER'),
+    path('resPreprEL', views.resPreprEL, name='resPreprEL'),
 ]

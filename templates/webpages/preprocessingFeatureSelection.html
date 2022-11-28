@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section style="margin-top:5em; margin-bottom:10em;">
+    <div class="imgBx">
+        <img src="{% static './img/processing.png' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx my-5 pt-5">
+            <h1 class="mt-5 pt-3">Feature Selection</h1>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="dropdown">
+                    <button class="btn btn-default" type="button" data-toggle="dropdown">Select
+                        Model
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-submenu">
+                            <a class="test" tabindex="-1" href="#">Filter<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-submenu">
+                                    <a class="" href="{% url 'resPreprFV' %}">Variance</a>
+                                    <a class="" href="{% url 'resPreprFC' %}">Correlation</a>
+                                    <a class="" href="{% url 'resPreprFMC' %}">Mutual_info_gain_classification</a>
+                                    <a class="" href="{% url 'resPreprFMR' %}">Mutual_info_gain_regression</a>
+                                    <a class="" href="{% url 'resPreprFA' %}">Mean_abs_difference</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a class="test" tabindex="-1" href="#">Embedded<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-submenu">
+                                    <a class="" href="{% url 'resPreprEL' %}">Lasso_embedded</a>
+                                    <a class="" href="{% url 'resPreprER' %}">Random_embedded</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a class="test" tabindex="-1" href="#">Wrapper<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-submenu">
+                                    <a class="test" href="#">Regression</a>
+                                    <a class="test" href="#">Classification</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <script>
+                                        $(document).ready(function () {
+                                            $('.dropdown-submenu a.test').on("click", function (e) {
+                                                $(this).next('ul').toggle();
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                            });
+                                        });
+                </script>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}

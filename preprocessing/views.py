@@ -15,10 +15,12 @@ def preprocessingCol(request):
         global numericaldata
         global df
         global col_name
+        global col_name_all
         numericaldata = (request.POST['num']).split()
         file = request.FILES['csvfile']
         df = pd.read_csv(file)
         col_name = df.columns.tolist()
+        col_name_all = df.columns.tolist()
     return render(request, 'webpages/preprocessingCol.html')
 
 
@@ -200,12 +202,16 @@ def resPreprocessingFeatureScaling(request):
     methods = (request.POST['Fmet']).split()
     global targetVariable
     targetVariable = int(request.POST['tar'])
+
     global col_name_num
     col_name_num = []
     for j in numericaldata:
         j = int(j)
         col_name_num.append(col_name[j])
-    col_name_num = list(set(col_name_num) - set([col_name[targetVariable]]))
+    try:
+        col_name_num.remove(col_name_all[targetVariable])
+    except:
+        pass
     for i in range(len(methods)):
         i = int(i)
         if(methods[i] == '0'):
@@ -258,17 +264,29 @@ def robust_scaling(i):
 
 def preprocessingFeatureEncoding(request):
     return render(request, 'webpages/preprocessingFeatureEncoding.html')
-
 def resPreprocessingFeatureEncoding(request):
-    methods = (request.POST['Emet']).split()
+    methods = (request.POST['Emet']).split()    
     n = int(request.POST['n'])
-    global col_name_enc
-    col_name_enc = []
+    global col_name_numerical
+    col_name_numerical = []
     for j in numericaldata:
         j = int(j)
-        col_name_enc.append(col_name[j])
-    col_name_enc = (df.columns.tolist() - list(set(col_name_enc)) - set([col_name[targetVariable]]))
-    print(col_name_enc)
+        col_name_numerical.append(col_name[j])
+    try:
+        col_name_numerical.remove(col_name_all[targetVariable])
+    except:
+        pass
+    global col_name_all_enc
+    col_name_all_enc = col_name_all
+    try:
+        col_name_all_enc.remove(col_name_all[targetVariable])
+    except:
+        pass
+    for i in col_name_numerical:
+        try:
+            col_name_all_enc.remove(i)
+        except:
+            pass
     for i in range(len(methods)):
         i = int(i)
         if(methods[i] == '0'):
@@ -286,52 +304,44 @@ def resPreprocessingFeatureEncoding(request):
         elif(methods[i] == '6'):
             df = mean_encoding(i)
     return render(request, 'webpages/results/resPreprocessingFeatureEncoding.html')
-
-
 def label_encoding(i):
     from sklearn import preprocessing
     label_encoder = preprocessing.LabelEncoder()
-    df[col_name_enc[i]+"_label_encoder"]= label_encoder.fit_transform(df[col_name_enc[i]]) #make new column
-    df.drop([col_name_enc[i]], axis=1,inplace=True)   #delete the old column 
+    df[col_name_all_enc[i]+"_label_encoder"]= label_encoder.fit_transform(df[col_name_all_enc[i]]) #make new column
+    df.drop([col_name_all_enc[i]], axis=1,inplace=True)   #delete the old column 
     return df
-
 def one_hot_encoding(i):
-    dummies = pd.get_dummies(df[col_name_enc[i]],drop_first=True)  
+    dummies = pd.get_dummies(df[col_name_all_enc[i]],drop_first=True)  
     for j in list(dummies.columns):
         df["ohe_"+j]=dummies[j]
     df.drop([col_name[i]], axis=1,inplace=True)   #delete the old column
     return df
-
-
 def hash_encoding(i,n):
     import category_encoders as ce
-    encoder=ce.HashingEncoder(cols=col_name_enc[i],n_components=n)
-    data_encoder=encoder.fit_transform(df[col_name_enc[i]])
+    encoder=ce.HashingEncoder(cols=col_name_all_enc[i],n_components=n)
+    data_encoder=encoder.fit_transform(df[col_name_all_enc[i]])
     col_name_temp=data_encoder.columns.tolist()
     for j in col_name_temp:
-        df["he_"+col_name_enc[i]+j]=data_encoder[j]
-    df.drop([col_name_enc[i]], axis=1,inplace=True)   #delete the old column
+        df["he_"+col_name_all_enc[i]+j]=data_encoder[j]
+    df.drop([col_name_all_enc[i]], axis=1,inplace=True)   #delete the old column
     return df
-
 def one_hot_encoding_many_cat(i,n): #n means n top most repeating categories
-    lst_n=df[col_name_enc[i]].value_counts().sort_values(ascending=False).head(10).index
+    lst_n=df[col_name_all_enc[i]].value_counts().sort_values(ascending=False).head(n).index
     lst_n=list(lst_n)
     for categories in lst_n:
-        df[categories]=np.where(df[col_name_enc[i]]==categories,1,0)
-    df.drop([col_name_enc[i]], axis=1,inplace=True)   #delete the old column
+        df[categories]=np.where(df[col_name_all_enc[i]]==categories,1,0)
+    df.drop([col_name_all_enc[i]], axis=1,inplace=True)   #delete the old column
     return df
-
 def frequency_encoding(i):
-    x=df[col_name_enc[i]].value_counts().to_dict()
-    df["fe_"+col_name_enc[i]]=df[col_name_enc[i]].map(x)
-    df.drop([col_name_enc[i]], axis=1,inplace=True)   #delete the old column
+    x=df[col_name_all_enc[i]].value_counts().to_dict()
+    df["fe_"+col_name_all_enc[i]]=df[col_name_all_enc[i]].map(x)
+    df.drop([col_name_all_enc[i]], axis=1,inplace=True)   #delete the old column
     return df
-
-def mean_encoding(i,output_column):
-    temp = "mean_orderinal_"+col_name_enc[i]
-    mean_ordinal=df.groupby([col_name_enc[i]])[output_column].mean().to_dict()
-    df[temp]=df[col_name_enc[i]].map(mean_ordinal)
-    df.drop([col_name_enc[i]], axis=1,inplace=True)   #delete the old column
+def mean_encoding(i):
+    temp = "mean_orderinal_"+col_name_all_enc[i]
+    mean_ordinal=df.groupby([col_name_all_enc[i]])[col_name[int(targetVariable)]].mean().to_dict()
+    df[temp]=df[col_name_all_enc[i]].map(mean_ordinal)
+    df.drop([col_name_all_enc[i]], axis=1,inplace=True)   #delete the old column
     return df
 
 
@@ -346,14 +356,31 @@ def preprocessingFeatureSelection(request):
     return render(request, 'webpages/preprocessingFeatureSelection.html')
 
 
-def preprocFS1(request):
-    return render(request, 'webpages/preprocessingFeatureSelection.html')
+def resPreprFV(request):
+    return render(request, 'webpages/results/resPrepFV.html')
 
-def preprocFS2(request):
-    return render(request, 'webpages/preprocessingFeatureSelection.html')
 
-def preprocFS3(request):
-    return render(request, 'webpages/preprocessingFeatureSelection.html')
+def resPreprFC(request):
+    return render(request, 'webpages/results/resPrepFC.html')
 
-def resPreprocessingFeatureSelection(request):
-    return render(request, 'webpages/resPreprocessingFeatureSelection.html')
+
+def resPreprFMC(request):
+    return render(request, 'webpages/results/resPrepFMC.html')
+
+
+def resPreprFMR(request):
+    return render(request, 'webpages/results/resPrepFMR.html')
+
+
+def resPreprFA(request):
+    return render(request, 'webpages/results/resPrepFA.html')
+
+
+def resPreprER(request):
+    return render(request, 'webpages/results/resPrepER.html')
+
+
+def resPreprEL(request):
+    return render(request, 'webpages/results/resPrepEL.html')
+
+
