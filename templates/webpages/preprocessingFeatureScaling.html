@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/processing.png' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx my-5 pt-5">
+            <h1 class="mt-5 pt-3">Feature Scaling</h1>
+            <ul class="list-group mb-5">
+                <li class="list-group-item">0) Skip</li>
+                <li class="list-group-item">1) absolute_maximum_scale</li>
+                <li class="list-group-item">2) min_max_scale</li>
+                <li class="list-group-item">3) normalization</li>
+                <li class="list-group-item">4) standardization</li>
+                <li class="list-group-item">5) robust_scaling</li>
+            </ul>
+            <form action="{% url 'resPreprocessingFeatureScaling' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBx">
+                    <span>Enter the method numbers for each numerical column excluding target variable</span>
+                    <input type="text" placeholder="Type here..." name="Fmet" value="1 1 1 1 1 1 1">
+                </div>
+                <div class="inputBx">
+                    <span>Enter the target variable</span>
+                    <input type="text" placeholder="Type here..." name="tar" value="10">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}

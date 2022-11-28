@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<section style="margin-top:5em; margin-bottom:10em;">
+    <div class="imgBx">
+        <img src="{% static './img/processing.png' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx my-5 pt-5">
+            <h1 class="mt-5 pt-3">Feature Encoding</h1>
+            <ul class="list-group mb-5">
+                <li class="list-group-item">0) Skip</li>
+                <li class="list-group-item">1) label_encoding</li>
+                <li class="list-group-item">2) one_hot_encoding</li>
+                <li class="list-group-item">3) hash_encoding</li>
+                <li class="list-group-item">4) one_hot_encoding_many_cat</li>
+                <li class="list-group-item">5) frequency_encoding</li>
+                <li class="list-group-item">6) mean_encoding</li>
+            </ul>
+            <form action="{% url 'resPreprocessingFeatureEncoding' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBx">
+                    <span>Enter the method numbers for each cateegorical column excluding target variable</span>
+                    <input type="text" placeholder="Type here..." name="Emet" value="1 1 4 1 5">
+                </div>
+                <div class="inputBx">
+                    <span>Enter the value of n (hash_encoding & one_hot_encoding_many_cat)</span>
+                    <input type="text" placeholder="Type here..." name="n" value="3">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
