@@ -16,6 +16,7 @@ urlpatterns = [
     path('preprocessingFeatureEncoding', views.preprocessingFeatureEncoding, name='preprocessingFeatureEncoding'),
     path('resPreprocessingFeatureEncoding', views.resPreprocessingFeatureEncoding, name='resPreprocessingFeatureEncoding'),
 
+    path('preprocessingFeatureSelecNum', views.preprocessingFeatureSelecNum, name='preprocessingFeatureSelecNum'),
     path('preprocessingFeatureSelection', views.preprocessingFeatureSelection, name='preprocessingFeatureSelection'),
     path('resPreprFV', views.resPreprFV, name='resPreprFV'),
     path('resPreprFC', views.resPreprFC, name='resPreprFC'),
@@ -24,4 +25,6 @@ urlpatterns = [
     path('resPreprFA', views.resPreprFA, name='resPreprFA'),
     path('resPreprER', views.resPreprER, name='resPreprER'),
     path('resPreprEL', views.resPreprEL, name='resPreprEL'),
+
+    path('delCol', views.delCol, name='delCol'),
 ]

@@ -3,7 +3,32 @@
 
 {% block content %}
 
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
+
+<section>
 
 
+    <div class="m-5">
+        <h3>Total Features : {{total_features}}</h3>
+        <h3>Length of Selected Features : {{selected_features_len}}</h3>
+        <h3>Selected Features : {{selected_features}}</h3>
+    </div>
+
+
+    <div class="contentBx">
+        <div class="formBx">
+            <form action="{% url 'delCol' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBx">
+                    <span>Column to be deleted</span>
+                    <input type="Text" placeholder="" name="del_col">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 
 {% endblock %}

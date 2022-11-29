@@ -3,7 +3,31 @@
 
 {% block content %}
 
+<link href="{% static './css/forms/style.css' %}" rel="stylesheet">
 
+<section>
 
+<div class="my-5 py-3">
+    {% for i in d %}
+    <h3>{{i}}</h3> 
+    {% endfor %}
+</div>
+
+    <div class="contentBx">
+        <div class="formBx">
+            <form action="{% url 'delCol' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="inputBx">
+                    <span>Column to be deleted</span>
+                    <input type="Text" placeholder="" name="del_col">
+                </div>
+                <div class="inputBx">
+                    <input type="submit" value="Submit" name="">
+                </div>
+            </form>
+        </div>
+    </div>
+
+</section>
 
 {% endblock %}

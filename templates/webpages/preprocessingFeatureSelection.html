@@ -8,13 +8,13 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <link href="{% static './css/forms/model.css' %}" rel="stylesheet">
 
-<section style="margin-top:5em; margin-bottom:10em;">
+<section>
     <div class="imgBx">
         <img src="{% static './img/processing.png' %}">
     </div>
     <div class="contentBx">
-        <div class="formBx my-5 pt-5">
-            <h1 class="mt-5 pt-3">Feature Selection</h1>
+        <div class="formBx">
+            <h1>Feature Selection</h1>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="dropdown">
@@ -40,15 +40,6 @@
                                 <li class="dropdown-submenu">
                                     <a class="" href="{% url 'resPreprEL' %}">Lasso_embedded</a>
                                     <a class="" href="{% url 'resPreprER' %}">Random_embedded</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <li class="dropdown-submenu">
-                            <a class="test" tabindex="-1" href="#">Wrapper<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-submenu">
-                                    <a class="test" href="#">Regression</a>
-                                    <a class="test" href="#">Classification</a>
                                 </li>
                             </ul>
                         </li>

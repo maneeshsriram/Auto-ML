@@ -4,6 +4,8 @@ import numpy as np
 import random
 from django.http import HttpResponse
 import csv
+from io import BytesIO
+import base64
 
 # Create your views here.
 
@@ -352,35 +354,158 @@ def mean_encoding(i):
 
 
 
+def preprocessingFeatureSelecNum(request):
+    return render(request, 'webpages/preprocessingFeatureSelecNum.html')
 def preprocessingFeatureSelection(request):
+    col_name = list(df.columns)
+    global num_cols_upd
+    num_cols_upd = (request.POST['num_cols_upd']).split()
     return render(request, 'webpages/preprocessingFeatureSelection.html')
-
-
 def resPreprFV(request):
-    return render(request, 'webpages/results/resPrepFV.html')
-
-
+    dat = {}
+    for i in df.var().items():
+        dat[i] = i
+    data = {
+        "d": dat
+    }
+    return render(request, 'webpages/results/resPrepFV.html', data)
 def resPreprFC(request):
-    return render(request, 'webpages/results/resPrepFC.html')
-
-
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from sklearn.model_selection import train_test_split
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 6))
+    new_df = df[col_name_num].copy()
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
+    X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
+    X_train[col_name[int(targetVariable)]] = new_df[col_name[int(targetVariable)]]
+    cor = X_train.corr()
+    sns.heatmap(cor, annot=True, cmap=plt.cm.CMRmap_r)
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    img_png = buffer.getvalue()
+    pair = base64.b64encode(img_png)
+    pair = pair.decode('utf-8')
+    buffer.close()
+    data = {
+        'plot': pair
+    }
+    return render(request, 'webpages/results/resPrepFC.html', data)
 def resPreprFMC(request):
-    return render(request, 'webpages/results/resPrepFMC.html')
-
-
+    import matplotlib.pyplot as plt
+    from sklearn.model_selection import train_test_split
+    from sklearn.feature_selection import mutual_info_classif
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 6))
+    new_df = df[col_name_num].copy()
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
+    X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
+    mutual_info = mutual_info_classif(X_train, y_train)
+    mutual_info = pd.Series(mutual_info)
+    mutual_info.index = X_train.columns
+    mutual_info.sort_values(ascending=False).plot.bar(figsize=(20, 8))
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    img_png = buffer.getvalue()
+    pair = base64.b64encode(img_png)
+    pair = pair.decode('utf-8')
+    buffer.close()
+    data = {
+        'plot': pair,
+    }
+    return render(request, 'webpages/results/resPrepFMC.html', data)
 def resPreprFMR(request):
-    return render(request, 'webpages/results/resPrepFMR.html')
-
-
+    import matplotlib.pyplot as plt
+    from sklearn.feature_selection import mutual_info_regression
+    from sklearn.model_selection import train_test_split
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(10, 6))
+    new_df = df[col_name_num].copy()
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
+    X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+    mutual_info = mutual_info_regression(X_train.fillna(0), y_train)
+    mutual_info = pd.Series(mutual_info)
+    mutual_info.index = X_train.columns
+    mutual_info.sort_values(ascending=False).plot.bar(figsize=(15,5))
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    img_png = buffer.getvalue()
+    pair = base64.b64encode(img_png)
+    pair = pair.decode('utf-8')
+    buffer.close()
+    data = {
+        'plot': pair,
+    }
+    return render(request, 'webpages/results/resPrepFMR.html', data)
 def resPreprFA(request):
-    return render(request, 'webpages/results/resPrepFA.html')
-
-
+    dat = {}    
+    for i in list(col_name_num):
+        mean_abs_diff = np.sum(np.abs(df[i] -np.mean(df[i], axis =0 )), axis = 0)/df[i].shape[0]
+        dat[(i, mean_abs_diff)] = (i)
+    data = {
+        'd': dat
+    }
+    return render(request, 'webpages/results/resPrepFA.html', data)
 def resPreprER(request):
-    return render(request, 'webpages/results/resPrepER.html')
-
-
+    new_df = df[col_name_num].copy()
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x=new_df.drop(labels=[col_name[int(targetVariable)]],axis=1)
+    y=new_df[col_name[int(targetVariable)]]
+    from sklearn.model_selection import train_test_split
+    X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.feature_selection import SelectFromModel
+    sel = SelectFromModel(RandomForestClassifier(n_estimators = 100))
+    sel.fit(X_train, y_train)
+    selected_feat= X_train.columns[(sel.get_support())]
+    data = {
+        'total_features' : X_train.shape[1],
+        'selected_features_len' : len(selected_feat),
+        'selected_features': list(selected_feat)
+    }
+    return render(request, 'webpages/results/resPrepER.html', data)
 def resPreprEL(request):
-    return render(request, 'webpages/results/resPrepEL.html')
+    new_df = df[col_name_num].copy()
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
+    from sklearn.model_selection import train_test_split
+    from sklearn.linear_model import Lasso, LogisticRegression
+    from sklearn.feature_selection import SelectFromModel
+    X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
+    sel = SelectFromModel(LogisticRegression(C=1, penalty='l1', solver='liblinear'))
+    sel.fit(X_train, y_train)
+    selected_feat = X_train.columns[(sel.get_support())]
+    data = {
+        'total_features': X_train.shape[1],
+        'selected_features_len': len(selected_feat),
+        'selected_features': list(selected_feat)
+    }
+    return render(request, 'webpages/results/resPrepEL.html', data)
 
 
+def delCol(request):
+    col_name_delete = []
+    col_del = (request.POST['del_col']).split()
+    for i in col_del:
+        col_name_delete.append(num_cols_upd[int(i)])
+    df.drop(col_name_delete, inplace=True, axis=1)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Preprocessed.csv"'
+    writer = csv.writer(response)
+    col_name_upd = df.columns.tolist()
+    writer.writerow(col_name_upd)
+    rows = df.to_numpy().tolist()
+    for i in range(len(rows)):
+        writer.writerow(rows[i])
+    df.dropna(inplace=True)
+    return response
