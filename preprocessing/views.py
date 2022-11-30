@@ -23,6 +23,23 @@ def preprocessingCol(request):
         df = pd.read_csv(file)
         col_name = df.columns.tolist()
         col_name_all = df.columns.tolist()
+
+        col_name_num1 = []
+        for i in numericaldata:
+            col_name_num1.append(col_name[int(i)])
+        for col in col_name_num1:
+            for j in range(df.shape[0]):
+                s=df[col][j]
+                s_new=''
+                try:
+                    for i in s:
+                        if(i=='1' or i=='2' or i=='3' or i=='4' or i=='5'or i=='6' or i=='7' or i=='8' or i=='9' or i=='0' or i=='.'):
+                            s_new=s_new + i
+                    s_new=float(s_new)
+                    df[col][j]=s_new 
+                except:
+                    pass
+
     return render(request, 'webpages/preprocessingCol.html')
 
 
@@ -158,6 +175,7 @@ def iqr(i):
                     df.drop(j,inplace=True)
             except:
                 pass
+        df.reset_index(inplace = True, drop = True)
         return df
 def zscore(i):
     col_name_outl = []
@@ -176,6 +194,7 @@ def zscore(i):
                 df.drop(j, inplace=True)
         except:
             pass
+    df.reset_index(inplace=True, drop=True)
     return df
 def iso_forest(i):
     col_name_outl = []
@@ -192,6 +211,7 @@ def iso_forest(i):
                 df.drop(j,inplace=True)
         except:
             pass
+    df.reset_index(inplace=True, drop=True)
     df.drop(['anomaly_score'],inplace=True, axis = 1)
     return df
 
@@ -491,7 +511,6 @@ def resPreprEL(request):
         'selected_features': list(selected_feat)
     }
     return render(request, 'webpages/results/resPrepEL.html', data)
-
 
 def delCol(request):
     col_name_delete = []

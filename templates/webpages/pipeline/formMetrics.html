@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<link href="{% static './css/forms/model.css' %}" rel="stylesheet">
+
+<section>
+    <div class="imgBx">
+        <img src="{% static './img/pipeline.jpg' %}">
+    </div>
+    <div class="contentBx">
+        <div class="formBx">
+            <form>
+                <div class="container">
+                    <div class="dropdown">
+                        <button class="btn btn-default" type="button" data-toggle="dropdown">Choose Metrics<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a class="test" tabindex="-1" href="#">Regression<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-submenu"><a href="{% url 'RegMAE' %}">MAE</a></li>
+                                    <li class="dropdown-submenu"><a href="{% url 'RegMSE' %}">MSE</a></li>
+                                    <li class="dropdown-submenu"><a href="{% url 'RegRMSE' %}">RMSE</a></li>
+                                    <li class="dropdown-submenu"><a href="{% url 'RegAdjR' %}">Adjusted R2</a></li>
+                                </ul>
+                            </li>
+                            <li class="dropdown-submenu">
+                                <a class="test" tabindex="-1" href="#">Classification<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li class="dropdown-submenu"><a href="{% url 'ClassAcc' %}">Accuracy</a></li>
+                                    <li class="dropdown-submenu"><a href="{% url 'ClassPrec' %}">Precision</a></li>
+                                    <li class="dropdown-submenu"><a href="{% url 'ClassRec' %}">Recall</a></li>
+                                    <li class="dropdown-submenu"><a href="{% url 'ClassF1' %}">F1</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <script>
+                    $(document).ready(function () {
+                        $('.dropdown-submenu a.test').on("click", function (e) {
+                            $(this).next('ul').toggle();
+                            e.stopPropagation();
+                            e.preventDefault();
+                        });
+                    });
+                </script>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
