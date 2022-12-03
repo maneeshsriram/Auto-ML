@@ -19,15 +19,15 @@ def preprocessingCol(request):
         global col_names_all
         global col_name
         global df
-        col_names_num = []
         numericaldata = (request.POST['num']).split()
         file = request.FILES['csvfile'] 
         df = pd.read_csv(file)
         col_name = df.columns.tolist()
         col_names_all = df.columns.tolist()
+        col_names_num1 = []
         for i in numericaldata:
-            col_names_num.append(col_name[int(i)])
-        for col in col_names_num:
+            col_names_num1.append(col_name[int(i)])
+        for col in col_names_num1:
             for j in range(df.shape[0]):
                 s=df[col][j]
                 s_new=''
@@ -40,7 +40,7 @@ def preprocessingCol(request):
                 except:
                     pass
         col_names_cat = col_name.copy()
-        for i in col_names_num:
+        for i in col_names_num1:
             try:
                 col_names_cat.remove(i)
             except:
@@ -80,10 +80,9 @@ def resPreprocessing(request):
     return render(request, 'webpages/results/resPreprocessing.html')
 def drop_rows(col_name, i):  # keep rows if atleast half columns are not NA
     try:
-        df.dropna(inplace=True)
+        df.dropna(thresh=len(col_name)/2, inplace=True)
     except:
         pass
-    df.reset_index(inplace=True, drop=True)
     return df
 def drop_col_explicit(col_name, i):
     try:
@@ -108,13 +107,22 @@ def drop_col_explicit(col_name, i):
         pass
     return df
 def impute_mean(col_name, i):
-    df[col_name[i]].fillna(df[col_name[i]].mean(), inplace=True)
+    try:
+        df[col_name[i]].fillna(df[col_name[i]].mean(), inplace=True)
+    except:
+        pass
     return df
 def impute_median(col_name,i):
-    df[col_name[i]].fillna(df[col_name[i]].median(), inplace = True)
+    try:
+        df[col_name[i]].fillna(df[col_name[i]].median(), inplace = True)
+    except:
+        pass
     return df
 def impute_mode(col_name,i):
-    df[col_name[i]].fillna(df[col_name[i]].mode()[0], inplace = True)
+    try:
+        df[col_name[i]].fillna(df[col_name[i]].mode()[0], inplace = True)
+    except:
+        pass
     return df
 def forward_fill(col_name, i):
     try:
@@ -170,57 +178,54 @@ def resPreprocessingOutlier(request):
             df = zscore(i)
         elif(methods[i] == '3'):
             df = iso_forest(i)
-    print(col_names_all)
-    print(col_names_num)
-    print(col_names_cat)
     return render(request, 'webpages/results/resPreprocessingOutlier.html')
 def iqr(i):
-        # col_name_outl = []
-        # for j in numericaldata: 
-        #     j = int(j)
-        #     col_name_outl.append(col_name[j])
-        q1 = np.percentile(df[col_names_num[i]], 25)
-        q3 = np.percentile(df[col_names_num[i]], 75)
+        col_name_outl = []
+        for j in numericaldata: 
+            j = int(j)
+            col_name_outl.append(col_name[j])
+        q1 = np.percentile(df[col_name_outl[i]], 25)
+        q3 = np.percentile(df[col_name_outl[i]], 75)
         IQR = q3-q1
         lwr_bound = q1-(1.5*IQR)
         upr_bound = q3+(1.5*IQR)
         size = df.shape[0]
         for j in range(size): 
             try:
-                if (df[col_names_num[i]][j]<lwr_bound or df[col_names_num[i]][j]>upr_bound):
+                if (df[col_name_outl[i]][j]<lwr_bound or df[col_name_outl[i]][j]>upr_bound):
                     df.drop(j,inplace=True)
             except:
                 pass
         df.reset_index(inplace = True, drop = True)
         return df
 def zscore(i):
-    # col_name_outl = []
-    # for j in numericaldata:
-    #     j = int(j)
-    #     col_name_outl.append(col_name[j])
+    col_name_outl = []
+    for j in numericaldata:
+        j = int(j)
+        col_name_outl.append(col_name[j])
     thres = 3.3
-    mean = np.mean(df[col_names_num[i]])
-    std = np.std(df[col_names_num[i]])
+    mean = np.mean(df[col_name_outl[i]])
+    std = np.std(df[col_name_outl[i]])
     upr_bound = mean+3.5*std
     lwr_bound = mean-3.5*std
     size = df.shape[0]
     for j in range(0, size):
         try:
-            if (df[col_names_num[i]][j] < lwr_bound or df[col_names_num[i]][j] > upr_bound):
+            if (df[col_name_outl[i]][j] < lwr_bound or df[col_name_outl[i]][j] > upr_bound):
                 df.drop(j, inplace=True)
         except:
             pass
     df.reset_index(inplace=True, drop=True)
     return df
 def iso_forest(i):
-    # col_name_outl = []
-    # for j in numericaldata:
-    #     j = int(j)
-    #     col_name_outl.append(col_name[j])
+    col_name_outl = []
+    for j in numericaldata:
+        j = int(j)
+        col_name_outl.append(col_name[j])
     from sklearn.ensemble import IsolationForest
     model=IsolationForest(n_estimators=100,max_samples='auto',contamination=float(0.02),random_state=2)
-    model.fit(df[[col_names_num[i]]])
-    df['anomaly_score'] = model.predict(df[[col_names_num[i]]])
+    model.fit(df[[col_name_outl[i]]])
+    df['anomaly_score'] = model.predict(df[[col_name_outl[i]]])
     for j in range(0,df.shape[0]):
         try:
             if(df['anomaly_score'][j]==-1):
@@ -240,6 +245,12 @@ def resPreprocessingFeatureScaling(request):
     methods = (request.POST['Fmet']).split()
     global targetVariable
     targetVariable = int(request.POST['tar'])
+
+    global col_names_num
+    col_names_num = []
+    for j in numericaldata:
+        j = int(j)
+        col_names_num.append(col_name[j])
     try:
         col_names_num.remove(col_names_all[targetVariable])
     except:
@@ -300,12 +311,26 @@ def preprocessingFeatureEncoding(request):
 def resPreprocessingFeatureEncoding(request):
     methods = (request.POST['Emet']).split()    
     n = int(request.POST['n'])
-    global col_names_cat_copy
+    global col_names_numerical
+    col_names_numerical = []
+    for j in numericaldata:
+        j = int(j)
+        col_names_numerical.append(col_name[j])
     try:
-        col_names_cat.remove(col_names_all[int(targetVariable)])
+        col_names_numerical.remove(col_names_all[targetVariable])
     except:
         pass
-    col_names_cat_copy = col_names_cat.copy()
+    global col_names_all_enc
+    col_names_all_enc = col_names_all.copy()
+    try:
+        col_names_all_enc.remove(col_names_all[targetVariable])
+    except:
+        pass
+    for i in col_names_numerical:
+        try:
+            col_names_all_enc.remove(i)
+        except:
+            pass
     for i in range(len(methods)):
         i = int(i)
         if(methods[i] == '0'):
@@ -326,8 +351,16 @@ def resPreprocessingFeatureEncoding(request):
 def label_encoding(i):
     from sklearn import preprocessing
     label_encoder = preprocessing.LabelEncoder()
-    df[col_names_cat_copy[i]+"_label_encoder"]= label_encoder.fit_transform(df[col_names_cat_copy[i]]) #make new column
-    df.drop([col_names_cat_copy[i]], axis=1,inplace=True) 
+    df[col_names_all_enc[i]+"_label_encoder"]= label_encoder.fit_transform(df[col_names_all_enc[i]]) #make new column
+    df.drop([col_names_all_enc[i]], axis=1,inplace=True) 
+    try:
+        numericaldata.remove(str(i))
+    except:
+        pass
+    try:
+        col_names_num.remove(col_name[i])
+    except:
+        pass
     try:
         col_names_cat.remove(col_name[i])
     except:
@@ -338,10 +371,18 @@ def label_encoding(i):
         pass
     return df
 def one_hot_encoding(i):
-    dummies = pd.get_dummies(df[col_names_cat_copy[i]],drop_first=True)  
+    dummies = pd.get_dummies(df[col_names_all_enc[i]],drop_first=True)  
     for j in list(dummies.columns):
         df["ohe_"+j]=dummies[j]
     df.drop([col_name[i]], axis=1,inplace=True)   #delete the old column
+    try:
+        numericaldata.remove(str(i))
+    except:
+        pass
+    try:
+        col_names_num.remove(col_name[i])
+    except:
+        pass
     try:
         col_names_cat.remove(col_name[i])
     except:
@@ -353,12 +394,20 @@ def one_hot_encoding(i):
     return df
 def hash_encoding(i,n):
     import category_encoders as ce
-    encoder=ce.HashingEncoder(cols=col_names_cat_copy[i],n_components=n)
-    data_encoder=encoder.fit_transform(df[col_names_cat_copy[i]])
+    encoder=ce.HashingEncoder(cols=col_names_all_enc[i],n_components=n)
+    data_encoder=encoder.fit_transform(df[col_names_all_enc[i]])
     col_name_temp=data_encoder.columns.tolist()
     for j in col_name_temp:
-        df["he_"+col_names_cat_copy[i]+j]=data_encoder[j]
-    df.drop([col_names_cat_copy[i]], axis=1,inplace=True)   #delete the old column
+        df["he_"+col_names_all_enc[i]+j]=data_encoder[j]
+    df.drop([col_names_all_enc[i]], axis=1,inplace=True)   #delete the old column
+    try:
+        numericaldata.remove(str(i))
+    except:
+        pass
+    try:
+        col_names_num.remove(col_name[i])
+    except:
+        pass
     try:
         col_names_cat.remove(col_name[i])
     except:
@@ -369,11 +418,19 @@ def hash_encoding(i,n):
         pass
     return df
 def one_hot_encoding_many_cat(i,n): #n means n top most repeating categories
-    lst_n=df[col_names_cat_copy[i]].value_counts().sort_values(ascending=False).head(n).index
+    lst_n=df[col_names_all_enc[i]].value_counts().sort_values(ascending=False).head(n).index
     lst_n=list(lst_n)
     for categories in lst_n:
-        df[categories]=np.where(df[col_names_cat_copy[i]]==categories,1,0)
-    df.drop([col_names_cat_copy[i]], axis=1,inplace=True)   #delete the old column
+        df[categories]=np.where(df[col_names_all_enc[i]]==categories,1,0)
+    df.drop([col_names_all_enc[i]], axis=1,inplace=True)   #delete the old column
+    try:
+        numericaldata.remove(str(i))
+    except:
+        pass
+    try:
+        col_names_num.remove(col_name[i])
+    except:
+        pass
     try:
         col_names_cat.remove(col_name[i])
     except:
@@ -384,9 +441,17 @@ def one_hot_encoding_many_cat(i,n): #n means n top most repeating categories
         pass
     return df
 def frequency_encoding(i):
-    x=df[col_names_cat_copy[i]].value_counts().to_dict()
-    df["fe_"+col_names_cat_copy[i]]=df[col_names_cat_copy[i]].map(x)
-    df.drop([col_names_cat_copy[i]], axis=1,inplace=True)   #delete the old column
+    x=df[col_names_all_enc[i]].value_counts().to_dict()
+    df["fe_"+col_names_all_enc[i]]=df[col_names_all_enc[i]].map(x)
+    df.drop([col_names_all_enc[i]], axis=1,inplace=True)   #delete the old column
+    try:
+        numericaldata.remove(str(i))
+    except:
+        pass
+    try:
+        col_names_num.remove(col_name[i])
+    except:
+        pass
     try:
         col_names_cat.remove(col_name[i])
     except:
@@ -397,10 +462,18 @@ def frequency_encoding(i):
         pass
     return df
 def mean_encoding(i):
-    temp = "mean_orderinal_"+col_names_cat_copy[i]
-    mean_ordinal=df.groupby([col_names_cat_copy[i]])[col_name[int(targetVariable)]].mean().to_dict()
-    df[temp]=df[col_names_cat_copy[i]].map(mean_ordinal)
-    df.drop([col_names_cat_copy[i]], axis=1,inplace=True)   #delete the old column
+    temp = "mean_orderinal_"+col_names_all_enc[i]
+    mean_ordinal=df.groupby([col_names_all_enc[i]])[col_name[int(targetVariable)]].mean().to_dict()
+    df[temp]=df[col_names_all_enc[i]].map(mean_ordinal)
+    df.drop([col_names_all_enc[i]], axis=1,inplace=True)   #delete the old column
+    try:
+        numericaldata.remove(str(i))
+    except:
+        pass
+    try:
+        col_names_num.remove(col_name[i])
+    except:
+        pass
     try:
         col_names_cat.remove(col_name[i])
     except:
@@ -422,10 +495,9 @@ def mean_encoding(i):
 def preprocessingFeatureSelecNum(request):
     return render(request, 'webpages/preprocessingFeatureSelecNum.html')
 def preprocessingFeatureSelection(request):
+    col_name = list(df.columns)
     global num_cols_upd
-    global targetVariableUpdated
     num_cols_upd = (request.POST['num_cols_upd']).split()
-    targetVariableUpdated = request.POST['tar']
     return render(request, 'webpages/preprocessingFeatureSelection.html')
 def resPreprFV(request):
     dat = {}
@@ -441,14 +513,12 @@ def resPreprFC(request):
     from sklearn.model_selection import train_test_split
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 6))
-    col_name = df.columns.tolist()
-    col_names_num.append(col_name[int(targetVariableUpdated)])
     new_df = df[col_names_num].copy()
-    new_df[col_name[int(targetVariableUpdated)]] = df[col_name[int(targetVariableUpdated)]]
-    x = new_df.drop(labels=[col_name[int(targetVariableUpdated)]], axis=1)
-    y = new_df[col_name[int(targetVariableUpdated)]]
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
     X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
-    X_train[col_name[int(targetVariableUpdated)]] = new_df[col_name[int(targetVariableUpdated)]]
+    X_train[col_name[int(targetVariable)]] = new_df[col_name[int(targetVariable)]]
     cor = X_train.corr()
     sns.heatmap(cor, annot=True, cmap=plt.cm.CMRmap_r)
     buffer = BytesIO()
@@ -468,12 +538,10 @@ def resPreprFMC(request):
     from sklearn.feature_selection import mutual_info_classif
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 6))
-    col_name = df.columns.tolist()
-    col_names_num.append(col_name[int(targetVariableUpdated)])
     new_df = df[col_names_num].copy()
-    new_df[col_name[int(targetVariableUpdated)]] = df[col_name[int(targetVariableUpdated)]]
-    x = new_df.drop(labels=[col_name[int(targetVariableUpdated)]], axis=1)
-    y = new_df[col_name[int(targetVariableUpdated)]]
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
     X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
     mutual_info = mutual_info_classif(X_train, y_train)
     mutual_info = pd.Series(mutual_info)
@@ -496,12 +564,10 @@ def resPreprFMR(request):
     from sklearn.model_selection import train_test_split
     plt.switch_backend('AGG')
     plt.figure(figsize=(10, 6))
-    col_name = df.columns.tolist()
-    col_names_num.append(col_name[int(targetVariableUpdated)])
     new_df = df[col_names_num].copy()
-    new_df[col_name[int(targetVariableUpdated)]] = df[col_name[int(targetVariableUpdated)]]
-    x = new_df.drop(labels=[col_name[int(targetVariableUpdated)]], axis=1)
-    y = new_df[col_name[int(targetVariableUpdated)]]
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
     X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
     mutual_info = mutual_info_regression(X_train.fillna(0), y_train)
     mutual_info = pd.Series(mutual_info)
@@ -528,12 +594,10 @@ def resPreprFA(request):
     }
     return render(request, 'webpages/results/resPrepFA.html', data)
 def resPreprER(request):
-    col_name = df.columns.tolist()
-    col_names_num.append(col_name[int(targetVariableUpdated)])
     new_df = df[col_names_num].copy()
-    new_df[col_name[int(targetVariableUpdated)]] = df[col_name[int(targetVariableUpdated)]]
-    x=new_df.drop(labels=[col_name[int(targetVariableUpdated)]],axis=1)
-    y=new_df[col_name[int(targetVariableUpdated)]]
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x=new_df.drop(labels=[col_name[int(targetVariable)]],axis=1)
+    y=new_df[col_name[int(targetVariable)]]
     from sklearn.model_selection import train_test_split
     X_train,X_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=0)
     from sklearn.ensemble import RandomForestClassifier
@@ -548,12 +612,10 @@ def resPreprER(request):
     }
     return render(request, 'webpages/results/resPrepER.html', data)
 def resPreprEL(request):
-    col_name = df.columns.tolist()
-    col_names_num.append(col_name[int(targetVariableUpdated)])
     new_df = df[col_names_num].copy()
-    new_df[col_name[int(targetVariableUpdated)]] = df[col_name[int(targetVariableUpdated)]]
-    x = new_df.drop(labels=[col_name[int(targetVariableUpdated)]], axis=1)
-    y = new_df[col_name[int(targetVariableUpdated)]]
+    new_df[col_name[int(targetVariable)]] = df[col_name[int(targetVariable)]]
+    x = new_df.drop(labels=[col_name[int(targetVariable)]], axis=1)
+    y = new_df[col_name[int(targetVariable)]]
     from sklearn.model_selection import train_test_split
     from sklearn.linear_model import Lasso, LogisticRegression
     from sklearn.feature_selection import SelectFromModel

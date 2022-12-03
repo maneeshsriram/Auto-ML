@@ -108,8 +108,6 @@ def save_model(model):
     response = HttpResponse(file, content_type=content_type)
     response['Content-Disposition'] = 'attachment; filename="model.pkl"'
     return response 
-
-
 def save_modelGenetic(model):
     import joblib
     joblib.dump({"template": model.fitted_pipeline_,"_imputed": model._imputed}, 'filename.pkl')
@@ -1165,15 +1163,15 @@ def logistic_cls_random(metric='F1 Score'):
                                random_state=100,n_jobs=-1,scoring=choice(metric))
 
   randomcv.fit(X_train,y_train)
-  precision, recall, f1 = result_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def multinomial_cls_random(metric='F1 Score'):
     from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import RandomizedSearchCV
@@ -1189,15 +1187,15 @@ def multinomial_cls_random(metric='F1 Score'):
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+    precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
         'rec': recall,
+        'acc': accuracy,
         'model': str(model)[:-2]
     }
     return data
-
 def sgdclassifier_cls_random(metric='F1 Score'):
     from sklearn.linear_model import SGDClassifier
     from sklearn.model_selection import RandomizedSearchCV
@@ -1225,15 +1223,15 @@ def sgdclassifier_cls_random(metric='F1 Score'):
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+    precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
         'rec': recall,
+        'acc': accuracy,
         'model': str(model)[:-2]
     }
     return data
-
 def lgbmclassifier_cls_random(metric='F1 Score'):
     from lightgbm import LGBMClassifier
     from sklearn.model_selection import RandomizedSearchCV
@@ -1255,15 +1253,15 @@ def lgbmclassifier_cls_random(metric='F1 Score'):
                                random_state=100,n_jobs=-1,scoring=choice(metric))
 
     randomcv.fit(X_train,y_train)
-    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+    precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
         'rec': recall,
+        'acc': accuracy,
         'model': str(model)[:-2]
     }
     return data
-
 def xgbclassifier_cls_random(metric='F1 Score'):
     from xgboost.sklearn import XGBClassifier
     from sklearn.model_selection import RandomizedSearchCV
@@ -1289,15 +1287,15 @@ def xgbclassifier_cls_random(metric='F1 Score'):
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+    precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
         'rec': recall,
+        'acc': accuracy,
         'model': str(model)[:-2]
     }
     return data
-
 def adaboostclassifier_cls_random(metric='F1 Score'):
     from sklearn.ensemble import AdaBoostClassifier
     from sklearn.model_selection import RandomizedSearchCV
@@ -1315,15 +1313,15 @@ def adaboostclassifier_cls_random(metric='F1 Score'):
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+    precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
         'rec': recall,
+        'acc': accuracy,
         'model': str(model)[:-2]
     }
     return data
-
 def decisionclassifier_cls_random(metric='F1 Score'):
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.model_selection import RandomizedSearchCV
@@ -1348,15 +1346,15 @@ def decisionclassifier_cls_random(metric='F1 Score'):
                                   random_state=100, n_jobs=-1, scoring=choice(metric))
 
     randomcv.fit(X_train, y_train)
-    precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+    precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
     data = {
         'f1_score': f1,
         'pre': precision,
         'rec': recall,
+        'acc': accuracy,
         'model': str(model)[:-2]
     }
     return data
-
 def ExtraTree_cls_random(metric='F1 Score'):
   from sklearn.ensemble import ExtraTreesClassifier
   from sklearn.model_selection import RandomizedSearchCV
@@ -1382,15 +1380,15 @@ def ExtraTree_cls_random(metric='F1 Score'):
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def gaussian_cls_random(metric='F1 Score'):
   from sklearn.naive_bayes import GaussianNB
   from sklearn.model_selection import RandomizedSearchCV
@@ -1405,15 +1403,15 @@ def gaussian_cls_random(metric='F1 Score'):
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def histGradient_cls_random(metric='F1 Score'):
   from sklearn.ensemble import HistGradientBoostingClassifier
   from sklearn.model_selection import RandomizedSearchCV
@@ -1437,15 +1435,15 @@ def histGradient_cls_random(metric='F1 Score'):
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def KNeighbors_cls_random(metric='F1 Score'):
   from sklearn.neighbors import KNeighborsClassifier
   from sklearn.model_selection import RandomizedSearchCV
@@ -1469,15 +1467,15 @@ def KNeighbors_cls_random(metric='F1 Score'):
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def svr_reg_random(metric='F1 Score'):
   from sklearn.svm import SVC
   from sklearn.model_selection import RandomizedSearchCV
@@ -1499,15 +1497,15 @@ def svr_reg_random(metric='F1 Score'):
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def mlp_cls_random(metric='F1 Score'):
   from sklearn.neural_network import MLPClassifier
   from sklearn.model_selection import RandomizedSearchCV
@@ -1528,15 +1526,15 @@ def mlp_cls_random(metric='F1 Score'):
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
 
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
-
 def randomForest_cls_random(metric='F1 Score'):
   from sklearn.ensemble import RandomForestClassifier
   from sklearn.model_selection import RandomizedSearchCV
@@ -1563,11 +1561,12 @@ def randomForest_cls_random(metric='F1 Score'):
   randomcv = RandomizedSearchCV(estimator=model, param_distributions=random_grid, n_iter=100, cv=3,
                                 random_state=100, n_jobs=-1, scoring=choice(metric))
   randomcv.fit(X_train, y_train)
-  precision, recall, f1 = Ranresult_metric(randomcv, X_train, y_train)
+  precision, recall, f1, accuracy = result_metric(randomcv, X_train, y_train)
   data = {
       'f1_score': f1,
       'pre': precision,
       'rec': recall,
+      'acc': accuracy,
       'model': str(model)[:-2]
   }
   return data
@@ -1598,7 +1597,6 @@ def linear_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def ridge_reg_random(metric='Adjusted R2'):
     from sklearn.linear_model import Ridge
     from sklearn.model_selection import RandomizedSearchCV
@@ -1623,7 +1621,6 @@ def ridge_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def lasso_reg_random(metric='Adjusted R2'):
     from sklearn.linear_model import Lasso
     from sklearn.model_selection import RandomizedSearchCV
@@ -1648,7 +1645,6 @@ def lasso_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def elastic_net_reg_random(metric='Adjusted R2'):
     from sklearn.linear_model import ElasticNet
     from sklearn.model_selection import RandomizedSearchCV
@@ -1675,7 +1671,6 @@ def elastic_net_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def sgd_reg_random(metric='Adjusted R2'):
     from sklearn.linear_model import SGDRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1708,7 +1703,6 @@ def sgd_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def lgbm_reg_random(metric='Adjusted R2'):
     from lightgbm import LGBMRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1738,7 +1732,6 @@ def lgbm_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def xgb_reg_random(metric='Adjusted R2'):
     from xgboost.sklearn import XGBRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1773,7 +1766,6 @@ def xgb_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def ard_reg_random(metric='Adjusted R2'):
     from sklearn.linear_model import ARDRegression
     from sklearn.model_selection import RandomizedSearchCV
@@ -1805,7 +1797,6 @@ def ard_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def adaboost_reg_random(metric='Adjusted R2'):
     from sklearn.ensemble import AdaBoostRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1832,7 +1823,6 @@ def adaboost_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def decisiontree_reg_random(metric='Adjusted R2'):
     from sklearn.tree import DecisionTreeRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1864,7 +1854,6 @@ def decisiontree_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def extratree_reg_random(metric='Adjusted R2'):
     from sklearn.ensemble import ExtraTreesRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1898,7 +1887,6 @@ def extratree_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def gaussian_reg_random(metric='Adjusted R2'):
     from sklearn.gaussian_process import GaussianProcessRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1925,7 +1913,6 @@ def gaussian_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def histgradient_reg_random(metric='Adjusted R2'):
     from sklearn.ensemble import HistGradientBoostingRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1961,7 +1948,6 @@ def histgradient_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def kneighbor_reg_random(metric='Adjusted R2'):
     from sklearn.neighbors import KNeighborsRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -1992,7 +1978,6 @@ def kneighbor_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def svr_reg_random(metric='Adjusted R2'):
     from sklearn.svm import SVR
     from sklearn.model_selection import RandomizedSearchCV
@@ -2020,7 +2005,6 @@ def svr_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def mlp_reg_random(metric='Adjusted R2'):
     from sklearn.neural_network import MLPRegressor
     from sklearn.model_selection import RandomizedSearchCV
@@ -2046,7 +2030,6 @@ def mlp_reg_random(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def randomForest_reg_random(metric='Adjusted R2'):
   from sklearn.ensemble import RandomForestRegressor
   from sklearn.model_selection import RandomizedSearchCV

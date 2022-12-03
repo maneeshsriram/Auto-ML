@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<section>
+    <div class="container">
+        <div class="jumbotron">
+          <h1>Top 3  Performing Models</h1>      
+          <p>Performance comparison on dataset</p>
+        </div>
+    </div>
+    <div class="container">
+        <table class="table table-hover">
+            <thead>
+              <tr class="table-dark">
+                <th scope="col">Metric</th>
+                {% for i in models %}
+                <th scope="col">{{i}}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Adjusted R2</th>
+                {% for i in adjr %}
+                <td>{{i}}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Mean absolute error</th>
+                {% for i in mae %}
+                <td>{{i}}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Mean square error</th>
+                {% for i in mse %}
+                <td>{{i}}</td>
+                {% endfor %}
+              </tr>
+              <tr>
+                <th scope="row">Root mean square error</th>
+                {% for i in rmse %}
+                <td>{{i}}</td>
+                {% endfor %}
+
+              </tr>
+
+            </tbody>
+          </table>
+    </div>
+    <br><br>
+    <div class="container">
+        <a href="{% url 'downloadCSV' %}" type="button" class="btn btn-warning btn-block">Download Preprocessed CSV</a>
+        <a href="{% url 'downloadModel1' %}" type="button" class="btn btn-warning btn-block">Download Model 1</a>
+        <a href="{% url 'downloadModel2' %}" type="button" class="btn btn-warning btn-block">Download Model 2</a>
+        <a href="{% url 'downloadModel3' %}" type="button" class="btn btn-warning btn-block">Download Model 3</a>
+    </div>
+
+</section>
+
+
+
+{% endblock %}

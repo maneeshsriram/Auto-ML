@@ -127,7 +127,7 @@ def resVisualization(request):
         for i in categorical:
             try:
                 if(df[i].nunique() < 20):
-                    fig = px.pie(df[i].value_counts(), names=df[i].unique(), title="Pie Plot") 
+                    fig = px.pie(df[i], names=i, title="Pie Plot") 
                     fig.update_layout(title={'font_size':22, 'xanchor': 'center', 'x':0.5})
                     pie.append(fig.to_html())
             except:

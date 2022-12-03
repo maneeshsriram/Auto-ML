@@ -3,6 +3,28 @@ import pandas as pd
 import csv
 import numpy as np
 from django.http import HttpResponse
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.linear_model import ARDRegression
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
+from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestRegressor
+from hyperopt import fmin, tpe, hp
+from sklearn.model_selection import cross_val_score
+
 
 
 def formDataset(request):
@@ -14,6 +36,8 @@ def formMetrics(request):
         global col_names
         global col_names_num
         global col_names_cat
+        global models 
+        models = []
         file = request.FILES['csvfile']
         df = pd.read_csv(file)
         col_names = df.columns.tolist()
@@ -23,7 +47,7 @@ def formMetrics(request):
         col_names_num = []
         for i in numericaldata:
             col_names_num.append(col_names_all[int(i)])
-        col_names_cat = col_names_all
+        col_names_cat = col_names_all.copy()
         for i in col_names_num:
             try:
                 col_names_cat.remove(i)
@@ -35,37 +59,168 @@ def formMetrics(request):
 def RegMAE(request):
     preProcessing()
     modelReg('Mean Absolute Error')
-    return downloadCsv()
+    adjr = []
+    mae = []
+    mse = []
+    rmse = []
+    for i in outputs:
+      adjr.append(i[0])
+      mae.append(i[1])
+      mse.append(i[2])
+      rmse.append(i[3])
+    data = {
+        "models": TOP3,
+        "adjr": adjr,
+        "mae": mae,
+        "mse": mse,
+        "rmse": rmse,
+    }
+    return render(request, 'webpages/pipeline/results/regression.html', data)
 def RegMSE(request):
     preProcessing()
     modelReg('Mean Squared Error')
-    return downloadCsv()
+    adjr = []
+    mae = []
+    mse = []
+    rmse = []
+    for i in outputs:
+      adjr.append(i[0])
+      mae.append(i[1])
+      mse.append(i[2])
+      rmse.append(i[3])
+    data = {
+        "models": TOP3,
+        "adjr": adjr,
+        "mae": mae,
+        "mse": mse,
+        "rmse": rmse,
+    }
+    return render(request, 'webpages/pipeline/results/regression.html', data)
 def RegRMSE(request):
     preProcessing()
     modelReg('Root Mean Squared Error')
-    return downloadCsv()
+    adjr = []
+    mae = []
+    mse = []
+    rmse = []
+    for i in outputs:
+      adjr.append(i[0])
+      mae.append(i[1])
+      mse.append(i[2])
+      rmse.append(i[3])
+    data = {
+        "models": TOP3,
+        "adjr": adjr,
+        "mae": mae,
+        "mse": mse,
+        "rmse": rmse,
+    }
+    return render(request, 'webpages/pipeline/results/regression.html', data)
 def RegAdjR(request):
     preProcessing()
     modelReg('Adjusted R2')
-    return downloadCsv()
+    adjr = []
+    mae = []
+    mse = []
+    rmse = []
+    for i in outputs:
+      adjr.append(i[0])
+      mae.append(i[1])
+      mse.append(i[2])
+      rmse.append(i[3])
+    data = {
+        "models": TOP3,
+        "adjr": adjr,
+        "mae": mae,
+        "mse": mse,
+        "rmse": rmse,
+    }
+    return render(request, 'webpages/pipeline/results/regression.html', data)
 def ClassAcc(request):
     preProcessing()
     modelClass('Accuracy')
-    return downloadCsv()
+    precision = []
+    recall = []
+    f1Score = []
+    accuracy = []
+    for i in outputs:
+      precision.append(i[0])
+      recall.append(i[1])
+      f1Score.append(i[2])
+      accuracy.append(i[3])
+    data = {
+        "models": TOP3,
+        "precision": precision,
+        "recall": recall,
+        "f1Score": f1Score,
+        "accuracy": accuracy,
+    }
+    return render(request, 'webpages/pipeline/results/classification.html', data)
 def ClassPrec(request):
     preProcessing()
     modelClass('Precision')
-    return downloadCsv()
+    precision = []
+    recall = []
+    f1Score = []
+    accuracy = []
+    for i in outputs:
+      precision.append(i[0])
+      recall.append(i[1])
+      f1Score.append(i[2])
+      accuracy.append(i[3])
+    data = {
+        "models": TOP3,
+        "precision": precision,
+        "recall": recall,
+        "f1Score": f1Score,
+        "accuracy": accuracy,
+    }
+    return render(request, 'webpages/pipeline/results/classification.html', data)
 def ClassRec(request):
     preProcessing()
     modelClass('Recall')
-    return downloadCsv()
+    precision = []
+    recall = []
+    f1Score = []
+    accuracy = []
+    for i in outputs:
+      precision.append(i[0])
+      recall.append(i[1])
+      f1Score.append(i[2])
+      accuracy.append(i[3])
+    data = {
+        "models": TOP3,
+        "precision": precision,
+        "recall": recall,
+        "f1Score": f1Score,
+        "accuracy": accuracy,
+    }
+    return render(request, 'webpages/pipeline/results/classification.html', data)
 def ClassF1(request):
     preProcessing()
     modelClass('F1 Score')
-    return downloadCsv()
+    precision = []
+    recall = []
+    f1Score = []
+    accuracy = []
+    for i in outputs:
+      precision.append(i[0])
+      recall.append(i[1])
+      f1Score.append(i[2])
+      accuracy.append(i[3])
+    data = {
+        "models": TOP3,
+        "precision": precision,
+        "recall": recall,
+        "f1Score": f1Score,
+        "accuracy": accuracy,
+    }
+    return render(request, 'webpages/pipeline/results/classification.html', data)
 
-def downloadCsv():
+
+
+#Download 
+def downloadCSV(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Preprocessed.csv"'
     writer = csv.writer(response)
@@ -75,7 +230,33 @@ def downloadCsv():
     for i in range(len(rows)):
         writer.writerow(rows[i])
     return response
-
+def downloadModel1(request):
+    import joblib
+    joblib.dump(models[0], 'model1.pkl')
+    f = open("model1.pkl", "rb")
+    content_type = 'application/octet-stream'
+    file = f.read()
+    response = HttpResponse(file, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename="model1.pkl"'
+    return response 
+def downloadModel2(request):
+    import joblib
+    joblib.dump(models[1], 'model2.pkl')
+    f = open("model2.pkl", "rb")
+    content_type = 'application/octet-stream'
+    file = f.read()
+    response = HttpResponse(file, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename="model2.pkl"'
+    return response 
+def downloadModel3(request):
+    import joblib
+    joblib.dump(models[2], 'model3.pkl')
+    f = open("model3.pkl", "rb")
+    content_type = 'application/octet-stream'
+    file = f.read()
+    response = HttpResponse(file, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename="model3.pkl"'
+    return response 
 
 
 
@@ -283,23 +464,6 @@ def feat_sel_handle():
 
 
 #Model making
-def choice(metric):
-  choice = {
-      'F1 Score': 'f1_weighted',
-      'Precision': 'precision_weighted',
-      'Recall': 'recall_weighted',
-      'Accuracy': 'accuracy'
-  }
-  return metric
-def choiceReg(metric):
-    choice = {
-        'Adjusted R2': 'r2',
-        'Mean Absolute Error': 'neg_mean_absolute_error',
-        'Mean Squared Error': 'neg_mean_squared_error',
-        'Root Mean Squared Error': 'neg_root_mean_squared_error'
-    }
-    return choice[metric]
-
 def modelClass(metric):
   pd.set_option("display.precision", 4)
   from sklearn.ensemble import AdaBoostClassifier
@@ -330,7 +494,7 @@ def modelClass(metric):
   ModelObject = {}
   X = df.drop([col_names[targetVariable]], axis=1) 
   Y = df[col_names[targetVariable]]
-  X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+  X_train, y_train= X, Y
   if isinstance(X_train, np.ndarray):
     X_train = pd.DataFrame(X_train)
     y_train = pd.DataFrame(y_train)
@@ -358,28 +522,30 @@ def modelClass(metric):
   }
   scores = pd.DataFrame(scores)
   scores = scores.sort_values(by=metric, ascending=False)
+  global TOP3
+  global outputs
   TOP3 = [x for x in scores["Model"].head(3)]
-  print(TOP3)
   scores = scores.set_index("Model")
+  outputs = []
   for i in TOP3:
     if i == 'adaboost':
-        adaboost_cls_hyperopt(metric)
+        outputs.append(adaboost_cls_hyperopt(metric))
     elif i == 'decision_tree':
-        decisionTree_cls_hyperopt(metric)
+        outputs.append(decisionTree_cls_hyperopt(metric))
     elif i == 'extra_trees':
-        extraTree_cls_hyperopt(metric)
+        outputs.append(extraTree_cls_hyperopt(metric))
     elif i == 'gaussianNB':
-        gaussianb_cls_hyperopt(metric)
+        outputs.append(gaussianb_cls_hyperopt(metric))
     elif i == 'gradient_boosting':
-        histGradient_cls_hyperopt(metric)
+        outputs.append(histGradient_cls_hyperopt(metric))
     elif i == 'k_nearest_neighbors':
-        kneighbor_cls_hyperopt(metric)
+        outputs.append(kneighbor_cls_hyperopt(metric))
     elif i == 'libsvm_svc':
-        svr_cls_hyperopt(metric)
+        outputs.append(svr_cls_hyperopt(metric))
     elif i == 'mlp':
-        mlp_cls_hyperopt(metric)
+        outputs.append(mlp_cls_hyperopt(metric))
     elif i == 'random_forest':
-        rfc_cls_hyperopt(metric)
+        outputs.append(rfc_cls_hyperopt(metric))
 def modelReg(metric):
   pd.set_option("display.precision", 4)
   from sklearn.ensemble import AdaBoostRegressor
@@ -412,7 +578,7 @@ def modelReg(metric):
   ModelObject = {}
   X = df.drop([col_names[targetVariable]], axis=1)
   Y = df[col_names[targetVariable]]
-  X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=0)
+  X_train, y_train = X, Y
   if isinstance(X_train, np.ndarray):
     X_train = pd.DataFrame(X_train)
     y_train = pd.DataFrame(y_train)
@@ -446,29 +612,34 @@ def modelReg(metric):
     scores = scores.sort_values(by='Adjusted R2', ascending=False)
   else:
     scores = scores.sort_values(by=metric, ascending=True)
+  global TOP3
+  global outputs
   TOP3 = [x for x in scores["Model"].head(3)]
   scores = scores.set_index("Model")
+  outputs = []
   for i in TOP3:
     if i == 'ard_regression':
-        ard_reg_hyperopt(metric)
+        outputs.append(ard_reg_hyperopt(metric))
     elif i == 'adaboost':
-        adaboost_reg_hyperopt(metric)
+        outputs.append(adaboost_reg_hyperopt(metric))
     elif i == 'decision_tree':
-        decisionTree_reg_hyperopt(metric)
+        outputs.append(decisionTree_reg_hyperopt(metric))
     elif i == 'extra_trees':
-        extraTree_reg_hyperopt(metric)
+        outputs.append(extraTree_reg_hyperopt(metric))
     elif i == 'gaussian_process':
-        gaussianProcess_reg_hyperopt(metric)
+        outputs.append(gaussianProcess_reg_hyperopt(metric))
     elif i == 'gradient_boosting':
-        histGradient_reg_hyperopt(metric)
+        outputs.append(histGradient_reg_hyperopt(metric))
     elif i == 'k_nearest_neighbors':
-        kneighbor_reg_hyperopt(metric)
+        outputs.append(kneighbor_reg_hyperopt(metric))
     elif i == 'libsvm_svr':
-        svr_reg_hyperopt(metric)
+        outputs.append(svr_reg_hyperopt(metric))
     elif i == 'mlp':
-        mlp_reg_hyperopt(metric)
+        outputs.append(mlp_reg_hyperopt(metric))
     elif i == 'random_forest':
-        randomforest_reg_hyperopt(metric)
+        outputs.append(randomforest_reg_hyperopt(metric))
+
+
 
 
 
@@ -479,16 +650,16 @@ def common_imports():
   from sklearn.model_selection import train_test_split
   X = df.drop([col_names[targetVariable]], axis=1)
   Y = df[col_names[targetVariable]]
-  X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=100)  
+  X_train, y_train,=X,Y 
   return X_train,y_train
 def result_metric(model,X,y):
     from sklearn.metrics import precision_score,recall_score,f1_score,accuracy_score
     y_pred = model.predict(X)
     precision= precision_score(y,y_pred, average='weighted')
     recall= recall_score(y,y_pred, average='weighted')
-    f1_score= f1_score(y,y_pred, average='weighted')
+    f1Score= f1_score(y,y_pred, average='weighted')
     accuracy= accuracy_score(y,y_pred)
-    print(precision, recall, f1_score, accuracy)
+    return round(precision, 5), round(recall, 5), round(f1Score, 5), round(accuracy, 5)
 def result_metricReg(model, X, y):
     from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
     from math import sqrt
@@ -500,20 +671,34 @@ def result_metricReg(model, X, y):
     mae = mean_absolute_error(y, y_pred)
     mse = mean_squared_error(y, y_pred)
     rmse = sqrt(mse)
-    print(adj_rsquared, mae, mse, rmse)
+    return round(adj_rsquared, 5), round(mae, 5),round(mse, 5), round(rmse, 5)
+
+
+def choice(metric):
+  choice = {
+      'F1 Score': 'f1_weighted',
+      'Precision': 'precision_weighted',
+      'Recall': 'recall_weighted',
+      'Accuracy': 'accuracy'
+  }
+  return choice[metric]
+def choiceReg(metric):
+    choice = {
+        'Adjusted R2': 'r2',
+        'Mean Absolute Error': 'neg_mean_absolute_error',
+        'Mean Squared Error': 'neg_mean_squared_error',
+        'Root Mean Squared Error': 'neg_root_mean_squared_error'
+    }
+    return choice[metric]
 
 
 
 
 def rfc_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import hp, fmin, tpe
-  from sklearn.ensemble import RandomForestClassifier
-  from sklearn.model_selection import cross_val_score
   X_train, y_train = common_imports()
 
   def objective(params):
     params = {'criterion': params['criterion'],
-              'max_depth': params['max_depth'],
               'max_features': params['max_features'],
               'min_samples_leaf': params['min_samples_leaf'],
               'min_samples_split': params['min_samples_split'],
@@ -526,7 +711,6 @@ def rfc_cls_hyperopt(metric='F1 Score'):
     # We aim to maximize f1 score, therefore we return it as a negative value
     return -score
   space = {'criterion': hp.choice('criterion', ['entropy', 'gini']),
-           'max_depth': hp.quniform('max_depth', 10, 200, 20),
            'max_features': hp.choice('max_features', ['auto', 'sqrt', 'log2']),
            'min_samples_leaf': hp.quniform('min_samples_leaf', 0.1, 0.5, 0.1),
            'min_samples_split': hp.quniform('min_samples_split', 0.1, 1, 0.1),
@@ -541,15 +725,12 @@ def rfc_cls_hyperopt(metric='F1 Score'):
   best['max_features'] = max_features[best['max_features']]
   criterion = {0: 'entropy', 1: 'gini'}
   best['criterion'] = criterion[best['criterion']]
-  model = RandomForestClassifier(n_estimators=int(best['n_estimators']), max_depth=best['max_depth'], min_samples_leaf=best['min_samples_leaf'], max_features=best['max_features'],
+  model = RandomForestClassifier(n_estimators=int(best['n_estimators']), min_samples_leaf=best['min_samples_leaf'], max_features=best['max_features'],
                                  criterion=best['criterion'], min_samples_split=best['min_samples_split'])
   model.fit(X_train, y_train)
-  result_metric(model, X_train, y_train)
-  return model
+  models.append(model)
+  return result_metric(model, X_train, y_train)
 def adaboost_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import AdaBoostClassifier
-  from sklearn.model_selection import cross_val_score
   X_train, y_train = common_imports()
 
   def objective(params):
@@ -580,18 +761,14 @@ def adaboost_cls_hyperopt(metric='F1 Score'):
   model = AdaBoostClassifier(n_estimators=int(
       best['n_estimators']), learning_rate=best['learning_rate'])
   model.fit(X_train, y_train)
-  result_metric(model, X_train, y_train)
-  return model
+  models.append(model)
+  return result_metric(model, X_train, y_train)
 def decisionTree_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.tree import DecisionTreeClassifier
-  from sklearn.model_selection import cross_val_score
   X_train, y_train = common_imports()
 
   def objective(params):
     # the function gets a set of variable parameters in "param"
     params = {'splitter': params['splitter'],
-              'max_depth': params['max_depth'],
               'min_samples_split': params['min_samples_split'],
               'min_samples_leaf': params['min_samples_leaf'],
               'max_features': params['max_features']
@@ -607,7 +784,6 @@ def decisionTree_cls_hyperopt(metric='F1 Score'):
 
   # possible values of parameters
   space = {'splitter': hp.choice('splitter', ['best', 'random']),
-           'max_depth': hp.quniform('max_depth', 2, 32, 2),
            'min_samples_split': hp.quniform('min_samples_split', 0.1, 1, 0.1),
            'min_samples_leaf': hp.quniform('min_samples_leaf', 0.1, 0.5, 0.1),
            'max_features': hp.choice('max_features', ['auto', 'sqrt', 'log2'])
@@ -623,21 +799,17 @@ def decisionTree_cls_hyperopt(metric='F1 Score'):
   splitter = {0: 'best', 1: 'random'}
   best['max_features'] = max_features[best['max_features']]
   best['splitter'] = splitter[best['splitter']]
-  model = DecisionTreeClassifier(max_depth=best['max_depth'], min_samples_split=best['min_samples_split'], min_samples_leaf=best['min_samples_leaf'], max_features=best['max_features'],
+  model = DecisionTreeClassifier(min_samples_split=best['min_samples_split'], min_samples_leaf=best['min_samples_leaf'], max_features=best['max_features'],
                                  splitter=best['splitter'])
   model.fit(X_train, y_train)
-  result_metric(model, X_train, y_train)
-  return model
+  models.append(model)
+  return result_metric(model, X_train, y_train)
 def extraTree_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import ExtraTreesClassifier
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
     # the function gets a set of variable parameters in "param"
     params = {'n_estimators':int(params['n_estimators']),
-              'max_depth': params['max_depth'], 
               'min_samples_split': params['min_samples_split'], 
               'min_samples_leaf': params['min_samples_leaf'],
               'max_features': params['max_features']
@@ -651,7 +823,6 @@ def extraTree_cls_hyperopt(metric='F1 Score'):
   
   # possible values of parameters
   space={ 'n_estimators' : hp.quniform('n_estimators',5,100,10),
-         'max_depth': hp.quniform('max_depth', 2, 32,2),
          'min_samples_split': hp.quniform('min_samples_split',0.1,1,0.1),
          'min_samples_leaf': hp.quniform('min_samples_leaf',0.1,0.5,0.1),
          'max_features': hp.choice('max_features', ['auto','sqrt','log2'])
@@ -664,16 +835,13 @@ def extraTree_cls_hyperopt(metric='F1 Score'):
          )
   max_features={ 0: 'auto', 1: 'sqrt',2:'log2' }
   best['max_features']=max_features[best['max_features']]
-  model=ExtraTreesClassifier(n_estimators=int(best['n_estimators']),max_depth=best['max_depth'],min_samples_split=best['min_samples_split'],
+  model=ExtraTreesClassifier(n_estimators=int(best['n_estimators']), min_samples_split=best['min_samples_split'],
                             min_samples_leaf=best['min_samples_leaf'],max_features=best['max_features'])
                       
   model.fit(X_train,y_train)
-  result_metric(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metric(model,X_train,y_train)
 def gaussianb_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.naive_bayes import GaussianNB
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
@@ -698,18 +866,14 @@ def gaussianb_cls_hyperopt(metric='F1 Score'):
   model=GaussianNB(var_smoothing=best['var_smoothing'])
                       
   model.fit(X_train,y_train)
-  result_metric(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metric(model,X_train,y_train)
 def histGradient_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import HistGradientBoostingClassifier
-  from sklearn.model_selection import cross_val_score
   X_train, y_train = common_imports()
 
   def objective(params):
     # the function gets a set of variable parameters in "param"
     params = {
-        'max_depth': params['max_depth'],
         'max_bins': int(params['max_bins']),
         'max_iter': int(params['max_iter']),
         'max_leaf_nodes': params['max_leaf_nodes'],
@@ -726,7 +890,6 @@ def histGradient_cls_hyperopt(metric='F1 Score'):
   # possible values of parameters
 
   space = {
-      'max_depth': hp.quniform('max_depth', 5, 100, 10),
       'max_bins': hp.quniform('max_bins', 5, 250, 10),
       'max_iter': hp.quniform('max_iter', 5, 100, 10),
       'max_leaf_nodes': hp.quniform('max_leaf_nodes', 5, 100, 10),
@@ -739,15 +902,12 @@ def histGradient_cls_hyperopt(metric='F1 Score'):
               algo=tpe.suggest,
               max_evals=10,  # maximum number of iterations
               )
-  model = HistGradientBoostingClassifier(max_depth=best['max_depth'], max_bins=int(best['max_bins']), learning_rate=best['learning_rate'],
+  model = HistGradientBoostingClassifier(max_bins=int(best['max_bins']), learning_rate=best['learning_rate'],
                                          max_iter=int(best['max_iter']), max_leaf_nodes=best['max_leaf_nodes'])
   model.fit(X_train, y_train)
-  result_metric(model, X_train, y_train)
-  return model
+  models.append(model)
+  return result_metric(model, X_train, y_train)
 def kneighbor_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.neighbors import KNeighborsClassifier
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
   def objective(params):
     # the function gets a set of variable parameters in "param"
@@ -784,12 +944,9 @@ def kneighbor_cls_hyperopt(metric='F1 Score'):
   best['weights']=weights[best['weights']]
   model=KNeighborsClassifier(n_neighbors=int(best['n_neighbors']),leaf_size=best['leaf_size'],p=best['p'],weights=best['weights'],algorithm=best['algorithm'])  
   model.fit(X_train,y_train)
-  result_metric(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metric(model,X_train,y_train)
 def svr_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.svm import SVC
-  from sklearn.model_selection import cross_val_score
   X_train, y_train = common_imports()
 
   def objective(params):
@@ -827,12 +984,9 @@ def svr_cls_hyperopt(metric='F1 Score'):
   model = SVC(tol=best['tol'], max_iter=best['max_iter'],
               kernel=best['kernel'], gamma=best['gamma'])
   model.fit(X_train, y_train)
-  result_metric(model, X_train, y_train)
-  return model
+  models.append(model)
+  return result_metric(model, X_train, y_train)
 def mlp_cls_hyperopt(metric='F1 Score'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.neural_network import MLPClassifier
-  from sklearn.model_selection import cross_val_score
   X_train, y_train = common_imports()
 
   def objective(params):
@@ -866,13 +1020,11 @@ def mlp_cls_hyperopt(metric='F1 Score'):
   model = MLPClassifier(alpha=best['alpha'], max_iter=int(
       best['max_iter']), activation=best['activation'])
   model.fit(X_train, y_train)
-  result_metric(model, X_train, y_train)
-  return model
+  models.append(model)
+  return result_metric(model, X_train, y_train)
+  
 
 def ard_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.linear_model import ARDRegression
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
   def objective(params):
     # the function gets a set of variable parameters in "param"
@@ -904,12 +1056,9 @@ def ard_reg_hyperopt(metric='Adjusted R2'):
          )
   model=ARDRegression(n_iter=int(best['n_iter']),alpha_1=best['alpha_1'],alpha_2=best['alpha_2'],lambda_1=best['lambda_1'],lambda_2=best['lambda_2'])
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def adaboost_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import AdaBoostRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
   def objective(params):
     # the function gets a set of variable parameters in "param"
@@ -940,17 +1089,14 @@ def adaboost_reg_hyperopt(metric='Adjusted R2'):
   best['loss']=loss[best['loss']]
   model=AdaBoostRegressor(n_estimators=int(best['n_estimators']),learning_rate=best['learning_rate'],loss=best['loss'])
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def decisionTree_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.tree import DecisionTreeRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
     # the function gets a set of variable parameters in "param"
-    params = {'max_depth': params['max_depth'], 
+    params = {
               'min_samples_split': params['min_samples_split'], 
               'min_samples_leaf': params['min_samples_leaf'],
               'max_features': params['max_features'],
@@ -966,7 +1112,7 @@ def decisionTree_reg_hyperopt(metric='Adjusted R2'):
   # possible values of parameters
 
 
-  space={'max_depth': hp.quniform('max_depth', 2, 32,2),
+  space={
          'min_samples_split': hp.quniform('min_samples_split',0.1,1,0.1),
          'min_samples_leaf': hp.quniform('min_samples_leaf',0.1,0.5,0.1),
          'max_features': hp.choice('max_features', ['auto','sqrt','log2']),
@@ -982,15 +1128,12 @@ def decisionTree_reg_hyperopt(metric='Adjusted R2'):
   best['max_features']=max_features[best['max_features']]
   criterion={ 0: 'squared_error', 1: 'friedman_mse',2:'absolute_error',3:'poisson' }
   best['criterion']=criterion[best['criterion']]
-  model=DecisionTreeRegressor(max_depth=best['max_depth'],min_samples_split=best['min_samples_split'],min_samples_leaf=best['min_samples_leaf'],max_features=best['max_features'],
+  model=DecisionTreeRegressor(min_samples_split=best['min_samples_split'],min_samples_leaf=best['min_samples_leaf'],max_features=best['max_features'],
                               criterion=best['criterion'])
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def extraTree_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import ExtraTreesRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
@@ -1029,12 +1172,9 @@ def extraTree_reg_hyperopt(metric='Adjusted R2'):
   model=ExtraTreesRegressor(n_estimators=int(best['n_estimators']),min_samples_split=best['min_samples_split'],min_samples_leaf=best['min_samples_leaf'],max_features=best['max_features'],
                               criterion=best['criterion'])  
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def gaussianProcess_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.gaussian_process import GaussianProcessRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
@@ -1061,18 +1201,14 @@ def gaussianProcess_reg_hyperopt(metric='Adjusted R2'):
          )
   model=GaussianProcessRegressor(alpha=best['alpha'],n_restarts_optimizer=best['n_restarts_optimizer'])  
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def histGradient_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import HistGradientBoostingRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
     # the function gets a set of variable parameters in "param"
     params = {
-              'max_depth': params['max_depth'], 
               'max_bins':int(params['max_bins']),
               'max_iter':int(params['max_iter']),
               'max_leaf_nodes':params['max_leaf_nodes'],
@@ -1088,7 +1224,6 @@ def histGradient_reg_hyperopt(metric='Adjusted R2'):
     return -score
   # possible values of parameters
   space={
-         'max_depth': hp.quniform('max_depth', 5,100,10),
          'max_bins':hp.quniform('max_bins',5,250,10),
           'max_iter': hp.quniform('max_iter', 5,100,10),
          'max_leaf_nodes':hp.quniform('max_leaf_nodes',5,100,10),
@@ -1102,15 +1237,12 @@ def histGradient_reg_hyperopt(metric='Adjusted R2'):
          )
   loss={ 0: 'squared_error', 1: 'least_squares',2:'absolute_error',3:'least_absolute_deviation' }
   best['loss']=loss[best['loss']]
-  model=HistGradientBoostingRegressor(max_depth=best['max_depth'],max_bins=int(best['max_bins']),learning_rate=best['learning_rate'],
+  model=HistGradientBoostingRegressor(max_bins=int(best['max_bins']),learning_rate=best['learning_rate'],
                                       max_iter=int(best['max_iter']),max_leaf_nodes=best['max_leaf_nodes'],loss=best['loss']) 
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model 
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def kneighbor_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.neighbors import KNeighborsRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
   def objective(params):
     # the function gets a set of variable parameters in "param"
@@ -1147,12 +1279,9 @@ def kneighbor_reg_hyperopt(metric='Adjusted R2'):
   best['algorithm']=algorithm[best['algorithm']]
   model=KNeighborsRegressor(n_neighbors=int(best['n_neighbors']),leaf_size=best['leaf_size'],p=best['p'],weights=best['weights'],algorithm=best['algorithm'])  
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def svr_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.svm import SVR
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
@@ -1187,12 +1316,9 @@ def svr_reg_hyperopt(metric='Adjusted R2'):
   best['gamma']=gamma[best['gamma']]
   model=SVR(tol=best['tol'],max_iter=best['max_iter'],kernel=best['kernel'],gamma=best['gamma'])  
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def mlp_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.neural_network import MLPRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
 
   def objective(params):
@@ -1223,12 +1349,9 @@ def mlp_reg_hyperopt(metric='Adjusted R2'):
   best['activation']=activation[best['activation']]
   model=MLPRegressor(alpha=best['alpha'],max_iter=int(best['max_iter']),activation=best['activation'])  
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
 def randomforest_reg_hyperopt(metric='Adjusted R2'):
-  from hyperopt import fmin, tpe, hp
-  from sklearn.ensemble import RandomForestRegressor
-  from sklearn.model_selection import cross_val_score
   X_train,y_train=common_imports()
   def objective(params):
     # the function gets a set of variable parameters in "param"
@@ -1261,5 +1384,6 @@ def randomforest_reg_hyperopt(metric='Adjusted R2'):
   model=RandomForestRegressor(n_estimators=int(best['n_estimators']),min_samples_leaf=best['min_samples_leaf'],max_features=best['max_features'],
                      max_leaf_nodes=int(best['max_leaf_nodes']))  
   model.fit(X_train,y_train)
-  result_metricReg(model,X_train,y_train)
-  return model
+  models.append(model)
+  return result_metricReg(model,X_train,y_train)
+
