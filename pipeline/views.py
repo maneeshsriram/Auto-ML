@@ -659,7 +659,7 @@ def result_metric(model,X,y):
     recall= recall_score(y,y_pred, average='weighted')
     f1Score= f1_score(y,y_pred, average='weighted')
     accuracy= accuracy_score(y,y_pred)
-    return round(precision, 5), round(recall, 5), round(f1Score, 5), round(accuracy, 5)
+    return round(precision, 4), round(recall, 4), round(f1Score, 4), round(accuracy, 4)
 def result_metricReg(model, X, y):
     from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
     from math import sqrt
@@ -671,7 +671,7 @@ def result_metricReg(model, X, y):
     mae = mean_absolute_error(y, y_pred)
     mse = mean_squared_error(y, y_pred)
     rmse = sqrt(mse)
-    return round(adj_rsquared, 5), round(mae, 5),round(mse, 5), round(rmse, 5)
+    return round(adj_rsquared, 4), round(mae, 4),round(mse, 4), round(rmse, 4)
 
 
 def choice(metric):

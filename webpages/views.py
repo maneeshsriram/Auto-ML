@@ -47,18 +47,18 @@ def resOverview(request):
                 'CountOfNonEmptyValues': (df[i].count()),
                 'CountOfEmptyValues': (df[i].isnull().sum()),
                 'PercentageOfEmptyValues': (df[i].isnull().sum()*100 /(df.shape[0])),
-                'mean': (df[i].mean()),
-                'median': (df[i].median()),
+                'mean': round(df[i].mean(), 3),
+                'median': round(df[i].median(), 3),
                 'mode': (df[i].mode()[0]),
-                'variance': (df[i].std()*df[i].std()),
-                'standardDeviation': (df[i].std()),
+                'variance': round(df[i].std()*df[i].std(), 3),
+                'standardDeviation': round(df[i].std()),
                 'minimumValue': (df[i].min()),
                 'maximumValue': (df[i].max()),
-                'q1': (df[i].quantile(0.25)),
-                'q2': (df[i].quantile(0.5)),
-                'q3': (df[i].quantile(0.75)),
-                'iqr': (df[i].quantile(0.75)-df[i].quantile(0.25)),
-                'kurtosis': (df[i].kurtosis())
+                'q1': round(df[i].quantile(0.25), 3),
+                'q2': round(df[i].quantile(0.5), 3),
+                'q3': round(df[i].quantile(0.75), 3),
+                'iqr': round(df[i].quantile(0.75)-df[i].quantile(0.25), 3),
+                'kurtosis': round(df[i].kurtosis(), 3)
             }
             numericalValues.append(objNum)
 
@@ -220,10 +220,10 @@ def prediction(request):
         f1 = cross_val_score(model, x_test, y_test,scoring='f1_weighted').mean()
         accuracy = cross_val_score(model, x_test, y_test,scoring='accuracy').mean()
         data = {
-            "pre": precision,
-            "rec": recall,
-            "f1_score": f1,
-            "acc":accuracy,
+            "pre": round(precision, 3),
+            "rec": round(recall, 3),
+            "f1_score": round(f1, 3),
+            "acc":round(accuracy, 3),
             "model": model
         }
         return render(request, 'webpages/results/resListClassModels.html', data)
@@ -240,15 +240,15 @@ def prediction(request):
             r_squared = cross_val_score(model, x_test, y_test,  scoring="r2", cv=5).mean()
             n=x_test.shape[0]
             p=x_test.shape[1]
-            adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
+            adj_rsquared = 1-(1-r_squared)*((n-1)/(n-p-1))
             mae = (-1) *cross_val_score(model, x_test, y_test,  scoring="neg_mean_absolute_error").mean()
             mse = (-1) *cross_val_score(model, x_test, y_test,  scoring="neg_mean_squared_error").mean()
             rmse= (-1) *cross_val_score(model, x_test, y_test,  scoring="neg_root_mean_squared_error").mean()
             data = {
-                "adj_rsquared": adj_rsquared,
-                "mae": mae,
-                "mse": mse,
-                "rmse": rmse,
+                "adj_rsquared": round(adj_rsquared, 3),
+                "mae": round(mae, 3),
+                "mse": round(mse, 3),
+                "rmse": round(rmse, 3),
                 "model": model
             }
             return render(request, 'webpages/results/resListRegModels.html', data)

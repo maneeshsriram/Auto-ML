@@ -170,9 +170,6 @@ def resPreprocessingOutlier(request):
             df = zscore(i)
         elif(methods[i] == '3'):
             df = iso_forest(i)
-    print(col_names_all)
-    print(col_names_num)
-    print(col_names_cat)
     return render(request, 'webpages/results/resPreprocessingOutlier.html')
 def iqr(i):
         # col_name_outl = []
@@ -424,7 +421,10 @@ def preprocessingFeatureSelecNum(request):
 def preprocessingFeatureSelection(request):
     global num_cols_upd
     global targetVariableUpdated
-    num_cols_upd = (request.POST['num_cols_upd']).split()
+    num_cols_ = (request.POST['num_cols_upd']).split()
+    num_cols_upd = []
+    for i in num_cols_:
+        num_cols_upd.append(df.columns.tolist()[int(i)])
     targetVariableUpdated = request.POST['tar']
     return render(request, 'webpages/preprocessingFeatureSelection.html')
 def resPreprFV(request):
@@ -574,22 +574,7 @@ def delCol(request):
     for i in col_del:
         col_name_delete.append(num_cols_upd[int(i)])
     df.drop(col_name_delete, inplace=True, axis=1)
-    try:
-        numericaldata.remove(str(i))
-    except:
-        pass
-    try:
-        col_names_num.remove(col_name[i])
-    except:
-        pass
-    try:
-        col_names_cat.remove(col_name[i])
-    except:
-        pass
-    try:
-        col_name.remove(col_name[i])
-    except:
-        pass
+    print(df.columns.tolist())
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Preprocessed.csv"'
     writer = csv.writer(response)

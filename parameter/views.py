@@ -11,7 +11,6 @@ warnings.filterwarnings("ignore")
 
 def tuningDataset(request):
     return render(request, 'webpages/parameterDataset.html')
-
 def tuningPkl(request):
     if request.method == 'POST':
         global targetvariable
@@ -20,17 +19,14 @@ def tuningPkl(request):
         file1 = request.FILES['csvfile']
         Dataset_file_name = default_storage.save(file1.name, file1)
     return render(request, 'webpages/parameterPkl.html')
-
 def tuningRegression(request):
     global regFlag
     regFlag = True
     return render(request, 'webpages/parameterRegression.html')
-
 def tuningClassification(request):
     global regFlag
     regFlag = False
     return render(request, 'webpages/parameterClassification.html')
-
 def tuningMethod(request):
     global model
     global metric 
@@ -57,7 +53,6 @@ def common_imports():
     Y = df[Y]
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=100)
     return X_train, y_train
-
 def choice(metric):
     choice = {
         'F1': 'f1_weighted',
@@ -66,7 +61,6 @@ def choice(metric):
         'Acc': 'accuracy'
     }
     return choice[metric]
-
 def Regchoice(metric):
     choice={
       'AdjR2':'r2',
@@ -75,15 +69,13 @@ def Regchoice(metric):
       'RMSE':'neg_root_mean_squared_error'
     }
     return choice[metric]
-
 def result_metric(model, X, y):
   from sklearn.model_selection import cross_val_score
   precision = cross_val_score(model, X, y, cv=2, scoring='precision_weighted', error_score='raise').mean()
   recall = cross_val_score(model, X, y, cv=2, scoring='recall_weighted').mean()
   f1 = cross_val_score(model, X, y, cv=2, scoring='f1_weighted').mean()
   accuracy = cross_val_score(model, X, y, cv=2, scoring='accuracy').mean()
-  return precision, recall, f1, accuracy
-
+  return round(precision, 3), round(recall, 3), round(f1, 3), round(accuracy, 3)
 def Regresult_metric(model,X,y):
   from sklearn.model_selection import cross_val_score
   r_squared = cross_val_score(model, X, y,  scoring="r2", cv=2).mean()
@@ -93,7 +85,7 @@ def Regresult_metric(model,X,y):
   mae = (-1) *cross_val_score(model, X, y,  scoring="neg_mean_absolute_error", cv=2).mean()
   mse = (-1) *cross_val_score(model, X, y,  scoring="neg_mean_squared_error", cv=2).mean()
   rmse= (-1) *cross_val_score(model, X, y,  scoring="neg_root_mean_squared_error", cv=2).mean()
-  return adj_rsquared, mae, mse, rmse
+  return round(adj_rsquared, 3), round(mae, 3), round(mse, 3), round(rmse, 3)
 
 
 
@@ -117,21 +109,15 @@ def save_modelGenetic(model):
     response = HttpResponse(file, content_type=content_type)
     response['Content-Disposition'] = 'attachment; filename="model.pkl"'
     return response
-
-
 def paramDownloadModel(request):
     response = save_model(gridcv)
     return response
-
 def paramDownloadModelRandom(request):
     response = save_model(randomcv)
     return response
 
 
-
-
-
-# Classification Grid
+#Grid Classification
 def logistic_cls_grid(metric):
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import GridSearchCV
@@ -157,7 +143,6 @@ def logistic_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-    
 def multinomial_cls_grid(metric):
     from sklearn.naive_bayes import MultinomialNB
     from sklearn.model_selection import GridSearchCV
@@ -180,7 +165,6 @@ def multinomial_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-
 def sgd_cls_grid(metric):
     from sklearn.linear_model import SGDClassifier
     from sklearn.model_selection import GridSearchCV
@@ -216,7 +200,6 @@ def sgd_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-
 def lgbm_cls_grid(metric):
     from lightgbm import LGBMClassifier
     from sklearn.model_selection import GridSearchCV
@@ -246,7 +229,6 @@ def lgbm_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-
 def xgb_cls_grid(metric):
     from xgboost.sklearn import XGBClassifier
     from sklearn.model_selection import GridSearchCV
@@ -279,7 +261,6 @@ def xgb_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-
 def adaboost_cls_grid(metric):
     from sklearn.ensemble import AdaBoostClassifier
     from sklearn.model_selection import GridSearchCV
@@ -305,7 +286,6 @@ def adaboost_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-
 def decisionTree_cls_grid(metric):
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.model_selection import GridSearchCV
@@ -338,7 +318,6 @@ def decisionTree_cls_grid(metric):
         'model': str(model)[:-2]
     }
     return data
-
 def ExtraTree_cls_grid(metric):
   from sklearn.ensemble import ExtraTreesClassifier
   from sklearn.model_selection import GridSearchCV
@@ -372,7 +351,6 @@ def ExtraTree_cls_grid(metric):
       'model': str(model)[:-2]
   }
   return data
-
 def gaussian_cls_grid(metric):
   from sklearn.naive_bayes import GaussianNB
   from sklearn.model_selection import GridSearchCV
@@ -395,7 +373,6 @@ def gaussian_cls_grid(metric):
       'model': str(model)[:-2]
   }
   return data
-
 def histGradient_cls_grid(metric):
   from sklearn.ensemble import HistGradientBoostingClassifier
   from sklearn.model_selection import GridSearchCV
@@ -431,7 +408,6 @@ def histGradient_cls_grid(metric):
       'model': str(model)[:-2]
   }
   return data
-
 def KNeighbors_cls_grid(metric):
   from sklearn.neighbors import KNeighborsClassifier
   from sklearn.model_selection import GridSearchCV
@@ -463,7 +439,6 @@ def KNeighbors_cls_grid(metric):
       'model': str(model)[:-2]
   }
   return data
-
 def svc_reg_grid(metric):
   from sklearn.svm import SVC
   from sklearn.model_selection import GridSearchCV
@@ -493,7 +468,6 @@ def svc_reg_grid(metric):
       'model': str(model)[:-2]
   }
   return data
-
 def mlp_cls_grid(metric):
   from sklearn.neural_network import MLPClassifier
   from sklearn.model_selection import GridSearchCV
@@ -522,7 +496,6 @@ def mlp_cls_grid(metric):
       'model': str(model)[:-2]
   }
   return data
-
 def randomForest_cls_grid(metric):
   from sklearn.ensemble import RandomForestClassifier
   from sklearn.model_selection import GridSearchCV
@@ -560,7 +533,7 @@ def randomForest_cls_grid(metric):
   return data
 
 
-# Regression Grid
+#Grid Regression
 def linear_reg_grid(metric='Adjusted R2'):
     from sklearn.linear_model import LinearRegression
     from sklearn.model_selection import GridSearchCV
@@ -585,7 +558,6 @@ def linear_reg_grid(metric='Adjusted R2'):
     }
     save_model(gridcv)
     return data
-
 def ridge_reg_grid(metric='Adjusted R2'):
     from sklearn.linear_model import Ridge
     from sklearn.model_selection import GridSearchCV
@@ -613,7 +585,6 @@ def ridge_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def lasso_reg_grid(metric='Adjusted R2'):
     from sklearn.linear_model import Lasso
     from sklearn.model_selection import GridSearchCV
@@ -636,7 +607,6 @@ def lasso_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def elastic_net_reg_grid(metric='Adjusted R2'):
     from sklearn.linear_model import ElasticNet
     from sklearn.model_selection import GridSearchCV
@@ -661,7 +631,6 @@ def elastic_net_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def sgd_reg_grid(metric='Adjusted R2'):
     from sklearn.linear_model import SGDRegressor
     from sklearn.model_selection import GridSearchCV
@@ -692,7 +661,6 @@ def sgd_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def lgbm_reg_grid(metric='Adjusted R2'):
     from lightgbm import LGBMRegressor
     from sklearn.model_selection import GridSearchCV
@@ -720,7 +688,6 @@ def lgbm_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def xgb_reg_grid(metric='Adjusted R2'):
     from xgboost.sklearn import XGBRegressor
     from sklearn.model_selection import GridSearchCV
@@ -753,7 +720,6 @@ def xgb_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def ard_reg_grid(metric='Adjusted R2'):
     from sklearn.linear_model import ARDRegression
     from sklearn.model_selection import GridSearchCV
@@ -783,7 +749,6 @@ def ard_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def adaboost_reg_grid(metric='Adjusted R2'):
     from sklearn.ensemble import AdaBoostRegressor
     from sklearn.model_selection import GridSearchCV
@@ -809,7 +774,6 @@ def adaboost_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def decisiontree_reg_grid(metric='Adjusted R2'):
     from sklearn.tree import DecisionTreeRegressor
     from sklearn.model_selection import GridSearchCV
@@ -840,7 +804,6 @@ def decisiontree_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def extratree_reg_grid(metric='Adjusted R2'):
     from sklearn.ensemble import ExtraTreesRegressor
     from sklearn.model_selection import GridSearchCV
@@ -872,7 +835,6 @@ def extratree_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def gaussian_reg_grid(metric='Adjusted R2'):
     from sklearn.gaussian_process import GaussianProcessRegressor
     from sklearn.model_selection import GridSearchCV
@@ -898,7 +860,6 @@ def gaussian_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def histgradient_reg_grid(metric='Adjusted R2'):
     from sklearn.ensemble import HistGradientBoostingRegressor
     from sklearn.model_selection import GridSearchCV
@@ -932,7 +893,6 @@ def histgradient_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def kneighbor_reg_grid(metric='Adjusted R2'):
     from sklearn.neighbors import KNeighborsRegressor
     from sklearn.model_selection import GridSearchCV
@@ -962,7 +922,6 @@ def kneighbor_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-
 def svr_reg_grid(metric='Adjusted r2'):
     from sklearn.svm import SVR
     from sklearn.model_selection import GridSearchCV
@@ -989,7 +948,6 @@ def svr_reg_grid(metric='Adjusted r2'):
         'model': str(model)[:-2]
     }
     return data
-
 def mlp_reg_grid(metric='Adjusted R2'):
     from sklearn.neural_network import MLPRegressor
     from sklearn.model_selection import GridSearchCV
@@ -1014,7 +972,6 @@ def mlp_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
     return data
-    
 def randomForest_reg_grid(metric='Adjusted R2'):
   from sklearn.ensemble import RandomForestRegressor
   from sklearn.model_selection import GridSearchCV
@@ -1051,9 +1008,6 @@ def randomForest_reg_grid(metric='Adjusted R2'):
         'model': str(model)[:-2]
     }
   return data
-
-
-
 def parameterGrid(request):
     if regFlag:
         if model == 'linear':
@@ -1136,15 +1090,14 @@ def Ranchoice(metric):
       'Rec': 'recall_weighted'
     }
     return choice[metric]
-
 def Ranresult_metric(model,X,y):
   from sklearn.model_selection import cross_val_score
   precision = cross_val_score(model, X, y, cv=2, scoring='precision_weighted',error_score='raise').mean()
   recall = cross_val_score(model, X, y, cv=2, scoring='recall_weighted').mean()
   f1 = cross_val_score(model, X, y, cv = 2,scoring='f1_weighted').mean()
-  return precision, recall, f1
+  return round(precision, 3), round(recall, 3), round(f1, 3)
 
-# Classification Random
+#Random Classification
 def logistic_cls_random(metric='F1 Score'):
   from sklearn.linear_model import LogisticRegression
   from sklearn.model_selection import RandomizedSearchCV
@@ -1572,8 +1525,7 @@ def randomForest_cls_random(metric='F1 Score'):
   return data
 
 
-
-#Regression Random
+#Random Regression
 def linear_reg_random(metric='Adjusted R2'):
     from sklearn.linear_model import LinearRegression
     from sklearn.model_selection import RandomizedSearchCV
@@ -2067,9 +2019,6 @@ def randomForest_reg_random(metric='Adjusted R2'):
       'model': str(model)[:-2]
   }
   return data
-
-
-
 def parameterRandom(request):
     if regFlag:
         if model == 'linear':
@@ -2143,7 +2092,7 @@ def parameterRandom(request):
 
 
 
-# Classification Genetic
+#Genetic Classification 
 def GeneticClasschoice(metric):
     choice={
       'F1':'f1_weighted',
@@ -2152,7 +2101,6 @@ def GeneticClasschoice(metric):
       'Acc':'accuracy'
     }
     return choice[metric]
-
 def GeneticClassresult_metric(model,X,y):
     from sklearn.metrics import precision_score,recall_score,f1_score,accuracy_score
     y_pred = model.predict(X)
@@ -2161,15 +2109,12 @@ def GeneticClassresult_metric(model,X,y):
     f1 = f1_score(y,y_pred, average='weighted')
     accuracy= accuracy_score(y,y_pred)
     return precision, recall, f1, accuracy
-
 def parameterDownloadModelGenetic(request):
     response = save_modelGenetic(tpot_classifier)
     return response
-
 def parameterDownloadModelGeneticReg(request):
     response = save_modelGenetic(tpot_regressor)
     return response
-
 def logistic_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train,y_train=common_imports()
@@ -2198,7 +2143,6 @@ def logistic_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def multinomial_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train,y_train=common_imports()
@@ -2221,7 +2165,6 @@ def multinomial_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def sgd_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2257,7 +2200,6 @@ def sgd_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def lgbm_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2288,7 +2230,6 @@ def lgbm_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def xgb_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2323,7 +2264,6 @@ def xgb_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def adaboost_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2349,7 +2289,6 @@ def adaboost_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def decisionTree_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2383,7 +2322,6 @@ def decisionTree_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def extraTree_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2417,7 +2355,6 @@ def extraTree_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def gaussian_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2441,7 +2378,6 @@ def gaussian_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def histGradient_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2478,7 +2414,6 @@ def histGradient_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def KNeighbors_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2510,7 +2445,6 @@ def KNeighbors_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def svc_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2539,7 +2473,6 @@ def svc_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def mlp_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train = common_imports()
@@ -2568,7 +2501,6 @@ def mlp_cls_genetic(metric='F1 Score'):
       'model': str(model)
     }
     return data
-
 def randomForest_cls_genetic(metric='F1 Score'):
     from tpot import TPOTClassifier
     X_train, y_train, X_test, y_test = common_imports()
@@ -2606,7 +2538,7 @@ def randomForest_cls_genetic(metric='F1 Score'):
     return data
 
 
-# Regression Genetic
+#Genetic Regression
 def GeneticRegchoice(metric):
     choice={
       'AdjR2':'r2',
@@ -2615,7 +2547,6 @@ def GeneticRegchoice(metric):
       'RMSE':'neg_root_mean_squared_error'
     } 
     return choice[metric]
-
 def GeneticRegresult_metric(model, X, y):
     from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
     from math import sqrt
@@ -2628,7 +2559,6 @@ def GeneticRegresult_metric(model, X, y):
     mse = mean_squared_error(y, y_pred)
     rmse = sqrt(mse)
     return adj_rsquared, mae, mse, rmse
-
 def linear_reg_genetic(metric):
     from tpot import TPOTRegressor
     X_train,y_train=common_imports()
@@ -2653,7 +2583,6 @@ def linear_reg_genetic(metric):
         'model': str(model)
     }
     return data
-
 def ridge_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train,y_train=common_imports()
@@ -2683,7 +2612,6 @@ def ridge_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def lasso_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train,y_train=common_imports()
@@ -2709,7 +2637,6 @@ def lasso_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def elastic_net_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOT_Regressor
     X_train, y_train = common_imports()
@@ -2737,7 +2664,6 @@ def elastic_net_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def sgd_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2772,7 +2698,6 @@ def sgd_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def lgbm_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2803,7 +2728,6 @@ def lgbm_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def xgb_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2839,7 +2763,6 @@ def xgb_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def ard_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2872,7 +2795,6 @@ def ard_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def adaboost_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2901,7 +2823,6 @@ def adaboost_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def decisionTree_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2935,7 +2856,6 @@ def decisionTree_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def extraTree_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2969,7 +2889,6 @@ def extraTree_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def gaussian_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -2998,7 +2917,6 @@ def gaussian_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def hist_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -3036,7 +2954,6 @@ def hist_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def kneighbor_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -3069,7 +2986,6 @@ def kneighbor_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def svr_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train,y_train=common_imports()
@@ -3099,7 +3015,6 @@ def svr_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def mlp_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -3127,7 +3042,6 @@ def mlp_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
 def randomForest_reg_genetic(metric='Adjusted R2'):
     from tpot import TPOTRegressor
     X_train, y_train = common_imports()
@@ -3164,8 +3078,6 @@ def randomForest_reg_genetic(metric='Adjusted R2'):
         'model': str(model)
     }
     return data
-
-
 def parameterGenetic(request):
     if regFlag:
         if model == 'linear':

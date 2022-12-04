@@ -32,7 +32,6 @@ from sklearn.model_selection import train_test_split
 
 def modelDataset(request):
     return render(request, 'webpages/modelDataset.html')
-
 def modelmaking(request):
     if request.method == 'POST':
         global targetvariable
@@ -44,7 +43,7 @@ def modelmaking(request):
 
 
 
-
+#All models
 def allModelsRegression(request):
     file = default_storage.open(file_name)
     df = pd.read_csv(file)
@@ -115,8 +114,6 @@ def allModelsRegression(request):
         data[names[i]] = temp2
     
     return render(request, 'webpages/results/resAllModelsRegression.html', data)
-
-
 def allModelsClassification(request):
     file = default_storage.open(file_name)
     df = pd.read_csv(file)
@@ -186,7 +183,6 @@ def Rcommon_imports():
   Y = df[Y]
   X_train,X_test,y_train,y_test=train_test_split(X,Y,test_size=0.3,random_state=100)  
   return X_train, y_train
-
 def Rresult_metric(model,X,y):
     from sklearn.model_selection import cross_val_score
     r_squared = cross_val_score(model, X, y,  scoring="r2", cv=5).mean() 
@@ -196,7 +192,7 @@ def Rresult_metric(model,X,y):
     mae = round(((-1)*cross_val_score(model, X, y,  scoring="neg_mean_absolute_error", cv=5)).mean(),2)
     mse = round(((-1)*cross_val_score(model, X, y,  scoring="neg_mean_squared_error", cv=5)).mean(),2)
     rmse=round(((-1)*cross_val_score(model, X, y,  scoring="neg_root_mean_squared_error", cv=5)).mean(),2)
-    return adj_rsquared, mae, mse, rmse
+    return round(adj_rsquared, 3), round(mae, 3), round(mse, 3), round(rmse, 3)
 
 def linear(request):
     from sklearn.linear_model import LinearRegression
@@ -212,7 +208,6 @@ def linear(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def ridge(request):
     from sklearn.linear_model import Ridge
     X_train, y_train = common_imports()
@@ -226,7 +221,6 @@ def ridge(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def lasso(request):
     from sklearn.linear_model import Lasso
     model = Lasso()
@@ -240,7 +234,6 @@ def lasso(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-    
 def enr(request):
     from sklearn.linear_model import ElasticNet
     X_train, y_train = Rcommon_imports()
@@ -254,7 +247,6 @@ def enr(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def ard(request):
     from sklearn.linear_model import ARDRegression
     X_train, y_train = Rcommon_imports()
@@ -268,7 +260,6 @@ def ard(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def sgd(request):
     from sklearn.linear_model import SGDRegressor
     X_train, y_train = Rcommon_imports()
@@ -282,7 +273,6 @@ def sgd(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def svr(request):
     from sklearn.svm import SVR
     X_train, y_train = Rcommon_imports()
@@ -296,7 +286,6 @@ def svr(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def dtr(request):
     from sklearn.tree import DecisionTreeRegressor
     X_train, y_train = Rcommon_imports()
@@ -310,7 +299,6 @@ def dtr(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def rfr(request):
     from sklearn.ensemble import RandomForestRegressor
     X_train, y_train = Rcommon_imports()
@@ -324,7 +312,6 @@ def rfr(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def gbr(request):
     from sklearn.ensemble import GradientBoostingRegressor
     X_train, y_train = Rcommon_imports()
@@ -338,7 +325,6 @@ def gbr(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def lgbm(request):
     from lightgbm import LGBMRegressor
     X_train, y_train = Rcommon_imports()
@@ -352,7 +338,6 @@ def lgbm(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def xgbr(request):
     from xgboost.sklearn import XGBRegressor
     X_train, y_train = Rcommon_imports()
@@ -367,7 +352,6 @@ def xgbr(request):
     }
     print(model)
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def guassian(request):
     from sklearn.gaussian_process import GaussianProcessRegressor
     X_train, y_train = Rcommon_imports()
@@ -381,7 +365,6 @@ def guassian(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def knr(request):
     from sklearn.neighbors import KNeighborsRegressor
     X_train, y_train = Rcommon_imports()
@@ -395,7 +378,6 @@ def knr(request):
         'model': (str(model))[:-2]
     }
     return render(request, 'webpages/results/resListRegModels.html', data)
-
 def mlp(request):
     from sklearn.neural_network import MLPRegressor
     X_train, y_train = Rcommon_imports()
@@ -411,6 +393,7 @@ def mlp(request):
     return render(request, 'webpages/results/resListRegModels.html', data)
 
 
+
 # Classification Models
 def common_imports():
     file = default_storage.open(file_name)
@@ -423,14 +406,13 @@ def common_imports():
     Y = df[Y]
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=100)
     return X_train, y_train
-
 def result_metric(model, X, y):
   from sklearn.model_selection import cross_val_score
   precision = cross_val_score(model, X, y, cv=5, scoring='precision_weighted', error_score='raise').mean()
   recall = cross_val_score(model, X, y, cv=5, scoring='recall_weighted').mean()
   f1 = cross_val_score(model, X, y, cv=5, scoring='f1_weighted').mean()
   accuracy = cross_val_score(model, X, y, cv=5, scoring='accuracy').mean()
-  return precision, recall, f1, accuracy
+  return round(precision, 3), round(recall, 3), round(f1, 3), round(accuracy, 3)
 
 def logistic(request):
     from sklearn.linear_model import LogisticRegression
@@ -445,7 +427,6 @@ def logistic(request):
         'model': "Logistic Classification"
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def svc(request):
     from sklearn.svm import SVC
     X_train, y_train = common_imports()
@@ -459,7 +440,6 @@ def svc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def dtc(request):
     from sklearn.tree import DecisionTreeClassifier
     X_train, y_train = common_imports()
@@ -473,7 +453,6 @@ def dtc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def gaussianNB(request):
     from sklearn.naive_bayes import GaussianNB
     X_train, y_train = common_imports()
@@ -487,7 +466,6 @@ def gaussianNB(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def multinomialNB(request):
     from sklearn.naive_bayes import MultinomialNB
     X_train, y_train = common_imports()
@@ -501,7 +479,6 @@ def multinomialNB(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def sgdc(request):
     from sklearn.linear_model import SGDClassifier
     X_train, y_train = common_imports()
@@ -515,7 +492,6 @@ def sgdc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def knnc(request):
     from sklearn.neighbors import KNeighborsClassifier
     model = KNeighborsClassifier()
@@ -529,7 +505,6 @@ def knnc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def rfc(request):
     from sklearn.ensemble import RandomForestClassifier
     model = RandomForestClassifier()
@@ -543,7 +518,6 @@ def rfc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def gbc(request):
     from sklearn.ensemble import GradientBoostingClassifier
     model = GradientBoostingClassifier()
@@ -557,7 +531,6 @@ def gbc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def lgbmc(request):
     from lightgbm import LGBMClassifier
     model = LGBMClassifier()
@@ -571,7 +544,6 @@ def lgbmc(request):
         'model' : str(model)[:-2]
     }
     return render(request, 'webpages/results/resListClassModels.html', data)
-
 def xgbc(request):
     from xgboost.sklearn import XGBClassifier
     model = XGBClassifier()
