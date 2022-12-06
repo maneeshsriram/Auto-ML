@@ -78,23 +78,23 @@ def allModelsRegression(request):
     for name, model in REGRESSORS:
         try:
             # MEAN ABSOLUTE ERROR
-            mae = (-1) * cross_val_score(model(), X_train, y_train,  scoring="neg_mean_absolute_error", cv=5).mean()
+            mae =  round((-1) * cross_val_score(model(), X_train, y_train,  scoring="neg_mean_absolute_error", cv=5).mean(), 3)
             MAE.append(mae)
 
             #MEAN SQUARE ERROR
-            mse = (-1) * cross_val_score(model(), X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean()
+            mse =  round((-1) * cross_val_score(model(), X_train, y_train,  scoring="neg_mean_squared_error", cv=5).mean(), 3)
             MSE.append(mse)
 
             #ROOT MEAN SQUARE ERROR
-            rmse=(-1) * cross_val_score(model(), X_train, y_train,  scoring="neg_root_mean_squared_error", cv=5).mean()
+            rmse= round((-1) * cross_val_score(model(), X_train, y_train,  scoring="neg_root_mean_squared_error", cv=5).mean(), 3)
             RMSE.append(rmse)
 
             #R2 Score  
-            r_squared = cross_val_score(model(), X, Y,  scoring="r2",cv=3).mean()
+            r_squared =  cross_val_score(model(), X, Y,  scoring="r2",cv=3).mean()
             names.append(name)
             n=X_train.shape[0]
             p=X_train.shape[1]
-            adj_rsquared=1-(1-r_squared)*((n-1)/(n-p-1))
+            adj_rsquared= round(1-(1-r_squared)*((n-1)/(n-p-1)), 3)
             ADJR2.append(adj_rsquared)
     
         except Exception as exception:
@@ -144,10 +144,10 @@ def allModelsClassification(request):
         y_train = pd.DataFrame(y_train)
     for name, model in CLASSIFIERS:
         try:
-            precision = cross_val_score(model(), X_train, y_train, cv=5, scoring='precision_weighted',error_score='raise').mean()
-            recall = cross_val_score(model(), X_train, y_train, cv=5, scoring='recall_weighted').mean()
-            f1 = cross_val_score(model(), X_train, y_train, cv = 5,scoring='f1_weighted').mean()
-            accuracy = cross_val_score(model(), X_train, y_train, cv = 5,scoring='accuracy').mean()
+            precision = round(cross_val_score(model(), X_train, y_train, cv=5, scoring='precision_weighted',error_score='raise').mean(), 3)
+            recall = round(cross_val_score(model(), X_train, y_train, cv=5, scoring='recall_weighted').mean(), 3)
+            f1 = round(cross_val_score(model(), X_train, y_train, cv = 5,scoring='f1_weighted').mean(), 3)
+            accuracy = round(cross_val_score(model(), X_train, y_train, cv = 5,scoring='accuracy').mean(), 3)
             names.append(name)
             F1_Score.append(f1)
             PRECISION.append(precision)
